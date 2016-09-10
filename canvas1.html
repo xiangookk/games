@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Canvas</title>
+<meta name = "viewport" content = "width = device-width, user-scalable = no">
+</head>
+<body>
+<canvas id="canvas" ></canvas>
+<script type="text/javascript" charset="utf-8">
+//get canvas
+var canvas = document.getElementById("canvas");
+//full screen
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+//是否支持触摸
+var touchable = 'createTouch' in document;
+if (touchable) {
+canvas.addEventListener('touchstart', onTouchStart, false);
+canvas.addEventListener('touchmove', onTouchMove, false);
+}
+else
+{
+window.addEventListener("mousedown",mouseDown,false);
+window.addEventListener("mousemove",mouseMove,false);
+window.addEventListener("mouseup",mouseUp,false);
+}
+//鼠标是否按下
+var isDown=false;
+//上一次触摸坐标
+var lastX;
+var lastY;
+
+var ctx =canvas.getContext("2d");
+ctx.lineWidth=8;//画笔粗细
+ctx.strokeStyle="#FF0000";//画笔颜色
+
+//触摸开始事件
+function onTouchStart(event) {
+event.preventDefault();
+lastX=event.touches[0].clientX;
+lastY=event.touches[0].clientY;
+drawRound(lastX,lastY);
+}
+
+//触摸滑动事件
+function onTouchMove(event) {
+	event.preventDefault();
+	drawLine(lastX,lastY,event.touches[0].clientX,event.touches[0].clientY);
+	lastX=event.touches[0].clientX;
+	lastY=event.touches[0].clientY;
+}
+//鼠标按下事件
+function mouseDown(event) {
+  isDown=true;
+  event.preventDefault();
+  lastX=event.clientX;
+  lastY=event.clientY;
+  drawRound(lastX,lastY);
+}
+//鼠标松开事件
+function mouseUp(event) {
+  isDown=false;
+}
+//鼠标移动事件
+function mouseMove(event) {
+  if(isDown){
+  event.preventDefault();
+  drawLine(lastX,lastY,event.clientX,event.clientY);
+  lastX=event.clientX;
+  lastY=event.clientY;
+  }
+}
+//画圆
+function drawRound(x,y)
+{
+ctx.fillStyle="#FF0000";
+ctx.beginPath();
+ctx.arc(x,y,4,0,Math.PI*2,true);
+ctx.closePath();
+ctx.fill();
+}
+//画线
+function drawLine(startX,startY,endX,endY)
+{
+ctx.beginPath();
+ctx.lineCap="round";
+ctx.moveTo(startX,startY);
+ctx.lineTo(endX,endY);
+ctx.stroke();
+}
+</script>
+</body>
+</html>

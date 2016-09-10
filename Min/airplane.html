@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>开飞机</title>
+<script src="jquery-1.9.1.min.js"></script>
+<style>
+    body{
+	    text-align:center;
+	    background-color:#1B272C;
+        font-family:LiSu,KaiTi;
+        font-size:18px;
+        padding-top:20px;
+        color:#fff;
+	    }
+    #frame{
+        box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        border-radius:6px;
+        -o-box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        -o-border-radius:6px;
+        -moz-transition:-moz-transform 2s; 
+        -webkit-transition:-webkit-transform 2s;
+        -o-transition:-o-transform 2s;
+
+	    padding:2px;
+        background-color:#ccc;
+        margin-left:auto;
+	    margin-right:auto;
+	    width:339px;
+	    height:374px;
+	    border:outset 2px #CCCCCC;
+        position:relative;
+	    }
+    #frametitle{
+        font-weight:600;
+	    width:100%;
+	    height:20px;
+	    background-color:#CCCCCC;
+        color:black;
+	    }
+    #framebody {
+        height:352px;
+        background-color:#1B272C;
+    }
+    #bodyleft {
+        height:100%;
+        float:left;
+        border-right:solid 1px #CCCCCC;
+        margin-right:-1px;
+        position:relative;
+    }
+    #bodyright {
+        width:80px;
+        height:100%;
+        float:right;
+        border:solid 0px green;
+    }
+    #main {
+        border-top:solid 1px #CCCCCC ;
+        width:100%;
+        height:100%;
+        background-color:#000;
+    }
+   
+    .box {
+        border-right: dashed 1px #1B272C;
+        border-bottom: dashed 1px #1B272C;
+        float: left;
+    }
+   #btnControl {
+        width:60px;
+        height:25px;
+        font-size:16px;
+        font-weight:bold;
+        background-color:#1B272C;
+        border:solid 1px #CCCCCC;
+        color:#fff;
+    }
+    #btnControl:hover {
+        background-color:rgba(204, 204, 204, 0.34);
+        cursor:pointer;
+    }
+    #msg {
+         position:absolute;
+         width:40px;
+         height:7px;
+         border-radius:15px;
+         border:solid 2px #ccc;
+         background-color:#010424;
+         padding-top:20px;
+         top:140px;
+         left:-10px;
+         font-size:35px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+         color:red;
+         display:none;
+    }  
+</style>
+<script type="text/javascript">
+    $(function(){var e=document.getElementById("myCanvas"),t=e.getContext("2d");t.strokeStyle="#ccc";var n,r=!1,i="Move.wav",s="Crash.wav",o=function(){t.beginPath(),t.clearRect(0,0,50,50),t.moveTo(15,15),t.lineTo(6,15),t.lineTo(6,25),t.lineTo(15,25),t.lineTo(15,15),t.lineTo(25,8),t.lineTo(25,32),t.lineTo(15,25),t.stroke(),t.moveTo(30,15),t.arc(16,20,15,-0.2,.2,!1),t.stroke(),t.moveTo(35,12),t.arc(22,20,15,-0.5,.5,!1),t.stroke(),t.moveTo(39,10),t.arc(28,20,15,-0.8,.8,!1),t.stroke(),n=!0},u=function(){t.beginPath(),t.clearRect(0,0,50,50),t.moveTo(15,15),t.lineTo(6,15),t.lineTo(6,25),t.lineTo(15,25),t.lineTo(15,15),t.lineTo(25,8),t.lineTo(25,32),t.lineTo(15,25),t.stroke(),t.moveTo(6,6),t.lineTo(35,35),t.stroke(),n=!1,bg},a=document.createElement("audio"),f=function(e){a.ended&&(r=!1),(!r||e==s)&&n&&(r=!0,a.src=e,a.play())};o(),$("#myCanvas").click(function(){n?u():o()});var l=28,c=16,h=11,p="BlockBg.gif",d=l*7+"px "+l*5+"px",v=[0,-l,-l*2,-l*3,-l*4,-l*5,-l*6],m=[0,-l,-l*2,-l*3,-l*4],g=v[4],y=m[3],b=v[2],w=m[3],E=[[0,c-4],[4,c-4],[8,c-4]],S=[[0,-4],[4,-4],[8,-4]],x=[],T,N=0,C,k=0,L=1,A=500,O=3e3,M=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l+"px",height:l+"px",background:"url("+p+")","background-size":d,backgroundPosition:b+"px "+w+"px",border:"0px"}),$(".box:eq("+n+")").attr("status","enemy")},_=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l+"px",height:l+"px",background:"url("+p+")","background-size":d,backgroundPosition:g+"px "+y+"px",border:"0px"}),$(".box:eq("+n+")").attr("status","me")},D=function(e){for(var t=0;t<e.length;t++)M(e[t][0],e[t][1])},P=function(e,t){var n=[[e+1,t],[e,t+1],[e+1,t+1],[e+2,t+1],[e+1,t+2],[e,t+3],[e+1,t+3],[e+2,t+3]];D(n),x.push(n)},H=function(e){for(var t=0;t<e.length;t++)_(e[t][0],e[t][1])},B=function(e,t){var n=[[e+1,t],[e,t+1],[e+1,t+1],[e+2,t+1],[e+1,t+2],[e,t+3],[e+1,t+3],[e+2,t+3]];H(n),T=n},j=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l-1+"px",height:l-1+"px",background:"",borderRight:"dashed 1px #1B272C",borderBottom:"dashed 1px #1B272C",borderLeft:"0px",borderTop:"0px"}),$(".box:eq("+n+")").attr("status","null")},F=function(e){for(var t=0;t<e.length;t++)j(e[t][0],e[t][1])},I=function(e){for(var t=0;t<e.length;t++)j(e[t][0],e[t][1])},q=function(){$(".box").css({width:l-1+"px",height:l-1+"px",background:"",borderRight:"dashed 1px #1B272C",borderBottom:"dashed 1px #1B272C",borderLeft:"0px",borderTop:"0px"}),$(".box").attr("status","null")},R=function(){for(var e=0;e<h*c;e++){var t=$("<div class='box' status='null'></div>");$("#main").append(t)}$(".box").css({width:l-1+"px",height:l-1+"px"}),$("#bodyleft").css("width",h*l+"px"),$("#framebody").css("height",c*l+"px"),$("#frame").css({width:h*l+82+"px",height:c*l+22+"px"}),B(E[1][0],E[1][1]);switch(V(3)){case 0:P(S[1][0],S[1][1]),P(S[2][0],S[2][1]);break;case 1:P(S[0][0],S[0][1]),P(S[2][0],S[2][1]);break;case 2:P(S[0][0],S[0][1]),P(S[1][0],S[1][1])}},U=function(){for(var e=0;e<x.length;e++)for(var t=0;t<x[e].length;t++){var n=(x[e][t][1]+1)*h+x[e][t][0];if(n>0&&$(".box:eq("+n+")").attr("status")=="me"){f(s),clearInterval(C),z("你死掉了。");return}}for(var e=0;e<x.length;e++)F(x[e]);var r=!1;for(var e=0;e<x.length;e++){var i=!0;for(var t=0;t<x[e].length;t++)x[e][t][1]+=1,x[e][t][1]<16&&(i=!1);i&&(r=!0)}if(r){x.shift(),k+=100;if(k%O==0){L=k/O+1;if(L>10){clearInterval(C),z("恭喜！通关了！");return}A=500-(L-1)*50,clearInterval(C),C=setInterval(J,A)}$("#score span").html(k),$("#level span").html(L)}for(var e=0;e<x.length;e++)D(x[e]);N++},z=function(e){$("#msg").html(e).css("display","block").animate({width:"400px",height:"70px"},400)},W=function(){if(T[0][0]-4<0)return;I(T);for(var e=0;e<T.length;e++)T[e][0]-=4;H(T),f(i)},X=function(){if(T[0][0]+4>h-1)return;I(T);for(var e=0;e<T.length;e++)T[e][0]+=4;H(T),f(i)},V=function(e){return Math.floor(Math.random()*e)};$(document).keydown(function(e){var t=e.which;switch(t){case 37:W();break;case 39:X()}});var J=function(){U();if(N==10){switch(V(3)){case 0:P(S[1][0],S[1][1]),P(S[2][0],S[2][1]);break;case 1:P(S[0][0],S[0][1]),P(S[2][0],S[2][1]);break;case 2:P(S[0][0],S[0][1]),P(S[1][0],S[1][1])}N=0}};$("#btnControl").click(function(){$(this).val()=="开始"?(C=setInterval(J,A),$(this).val("暂停")):(clearInterval(C),$(this).val("开始"))}),R()})
+</script>
+</head>
+<body>
+<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+   <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
+   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
+</div>
+<div id="frame">
+  <div id="frametitle">开飞机</div>
+  <div id="framebody">
+      <div id="bodyleft">
+        
+        <div id="main">
+        </div>
+      </div>
+      <div id="bodyright">    
+          <div id="score"><br />得分：<br /><span>0</span></div>
+          <div id="level"><br />级别：<br /><span>1</span></div>    
+          <div id="menu">
+            <br />
+            <input type="button" id="btnControl" value="开始" />
+          </div>   
+      </div>    
+  </div>
+  <div id="msg"></div>
+</div>
+<div><br /><a href="index.html">返回主页</a></div>
+</body>
+</html>

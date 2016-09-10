@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>贪吃蛇</title>
+<script src="jquery-1.9.1.min.js"></script>
+<style>
+    body{
+	    text-align:center;
+	    background-color:#1B272C;
+        font-family:LiSu,KaiTi;
+        font-size:18px;
+        padding-top:20px;
+        color:#fff;
+	    }
+    #frame{
+        box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        border-radius:6px;
+        -o-box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        -o-border-radius:6px;
+        -moz-transition:-moz-transform 2s; 
+        -webkit-transition:-webkit-transform 2s;
+        -o-transition:-o-transform 2s;
+
+        padding:2px;
+        background-color:#ccc;
+	    margin-left:auto;
+	    margin-right:auto;
+	    width:339px;
+	    height:374px;
+	    border:outset 2px #CCCCCC;
+        position:relative;    
+	    }
+    #frametitle{
+        font-weight:600;
+	    width:100%;
+	    height:20px;
+	    background-color:#CCCCCC;
+        color:black;
+	    }
+    #framebody {
+        height:352px;
+        background-color:#1B272C;
+    }
+    #bodyleft {
+        height:100%;
+        float:left;
+        border-right:solid 1px #CCCCCC;
+        margin-right:-1px;
+        position:relative;
+    }
+    #bodyright {
+        width:80px;
+        height:100%;
+        float:right;
+        border:solid 0px green;
+    }
+    #main {
+        border-top:solid 1px #CCCCCC ;
+        width:100%;
+        height:100%;
+        background-color:#000;
+    }
+   
+    .box {
+        border-right: dashed 1px #1B272C;
+        border-bottom: dashed 1px #1B272C;
+        float: left;
+    }
+    #btnControl {
+        width:60px;
+        height:25px;
+        font-size:16px;
+        font-weight:bold;
+        background-color:#1B272C;
+        border:solid 1px #CCCCCC;
+        color:#fff;
+    }
+    #btnControl:hover {
+        background-color:rgba(204, 204, 204, 0.34);
+        cursor:pointer;
+    }
+    #msg {
+         position:absolute;
+         width:40px;
+         height:7px;
+         border-radius:15px;
+         border:solid 2px #ccc;
+         background-color:#010424;
+         padding-top:20px;
+         top:140px;
+         left:60px;
+         font-size:35px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+         color:red;
+         display:none;
+    }
+</style>
+<script type="text/javascript">
+   $(function(){var e=document.getElementById("myCanvas"),t=e.getContext("2d");t.strokeStyle="#fff";var n,r=!1,i="Move.wav",s="Crash.wav",o=function(){t.beginPath(),t.clearRect(0,0,50,50),t.moveTo(15,15),t.lineTo(6,15),t.lineTo(6,25),t.lineTo(15,25),t.lineTo(15,15),t.lineTo(25,8),t.lineTo(25,32),t.lineTo(15,25),t.stroke(),t.moveTo(30,15),t.arc(16,20,15,-0.2,.2,!1),t.stroke(),t.moveTo(35,12),t.arc(22,20,15,-0.5,.5,!1),t.stroke(),t.moveTo(39,10),t.arc(28,20,15,-0.8,.8,!1),t.stroke(),n=!0},u=function(){t.beginPath(),t.clearRect(0,0,50,50),t.moveTo(15,15),t.lineTo(6,15),t.lineTo(6,25),t.lineTo(15,25),t.lineTo(15,15),t.lineTo(25,8),t.lineTo(25,32),t.lineTo(15,25),t.stroke(),t.moveTo(6,6),t.lineTo(35,35),t.stroke(),n=!1},a=document.createElement("audio"),f=function(e){a.ended&&(r=!1),(!r||e==s)&&n&&(r=!0,a.src=e,a.play())};$("#myCanvas").click(function(){n?u():o()});var l=28,c=16,h=22,p="BlockBg.gif",d=l*7+"px "+l*5+"px",v=[0,-l,-l*2,-l*3,-l*4,-l*5,-l*6],m=[0,-l,-l*2,-l*3,-l*4],g=m[3],y=v[5],b=m[1],w=v[0],E,S="right",x,T=0,N=1,C=500,k=3e3,L=function(){H()},A=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l+"px",height:l+"px",background:"url("+p+")","background-size":d,backgroundPosition:y+"px "+g+"px",border:"0px"}),$(".box:eq("+n+")").attr("status","active")},O=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l-1+"px",height:l-1+"px",background:"url("+p+")","background-size":d,backgroundPosition:w+"px "+b+"px"}),$(".box:eq("+n+")").attr("status","food")},M=function(){for(var e=0;e<E.length;e++)A(E[e][0],E[e][1])},_=function(){var e=Math.floor(Math.random()*h),t=Math.floor(Math.random()*c),n=t*h+e;if($(".box:eq("+n+")").attr("status")=="active"){_();return}w=v[Math.floor(Math.random()*v.length)],O(e,t)},D=function(e,t){if(e<0||t<0)return;var n=t*h+e;$(".box:eq("+n+")").css({width:l-1+"px",height:l-1+"px",background:"",borderRight:"dashed 1px #1B272C",borderBottom:"dashed 1px #1B272C"}),$(".box:eq("+n+")").attr("status","null")},P=function(){$(".box").css({width:l-1+"px",height:l-1+"px",background:"",borderRight:"dashed 1px #1B272C",borderBottom:"dashed 1px #1B272C",borderLeft:"0px",borderTop:"0px"}),$(".box").attr("status","null")},H=function(){D(E[E.length-1][0],E[E.length-1][1]);for(var e=E.length-1;e>0;e--)E[e][0]=E[e-1][0],E[e][1]=E[e-1][1];switch(S){case"up":E[0][1]-1<0?E[0][1]=c-1:E[0][1]-=1,B(E[0][0],E[0][1]);break;case"down":E[0][1]+1>c-1?E[0][1]=0:E[0][1]+=1,B(E[0][0],E[0][1]);break;case"left":E[0][0]-1<0?E[0][0]=h-1:E[0][0]-=1,B(E[0][0],E[0][1]);break;case"right":E[0][0]+1>h-1?E[0][0]=0:E[0][0]+=1,B(E[0][0],E[0][1])}A(E[0][0],E[0][1]),q=!0,f(i)},B=function(e,t){var n=t*h+e;if($(".box:eq("+n+")").attr("status")=="active")clearInterval(x),f(s),j("笨蛋，撞到屁股啦！");else if($(".box:eq("+n+")").attr("status")=="food"){E.push([-1,-1]),_(),T+=100;if(T%k==0){N=T/k+1;if(N>10){clearInterval(x),j("恭喜！通关啦！");return}C=500-(N-1)*50,clearInterval(x),x=setInterval(L,C),F()}$("#score span").html(T),$("#level span").html(N)}},j=function(e){$("#msg").html(e).css("display","block").animate({width:"400px",height:"70px"},400)},F=function(){E=[[2,7],[1,7],[0,7]],S="right",P(),M(),_()},I=function(){for(var e=0;e<c*h;e++){var t=$("<div class='box' status='null'></div>");$("#main").append(t)}$(".box").css({width:l-1+"px",height:l-1+"px"}),$("#bodyleft").css("width",h*l+"px"),$("#framebody").css("height",c*l+"px"),$("#frame").css({width:h*l+83+"px",height:c*l+22+"px"}),F(),o()},q=!1;$(document).keydown(function(e){if(!q)return;q=!1;var t=e.which;switch(t){case 37:S!="right"&&(S="left");break;case 38:S!="down"&&(S="up");break;case 39:S!="left"&&(S="right");break;case 40:S!="up"&&(S="down")}}),$("#btnControl").click(function(){$(this).val()=="开始"?(x=setInterval(L,C),$(this).val("暂停")):(clearInterval(x),$(this).val("开始"))}),I()})
+</script>
+</head>
+<body>
+<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+   <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
+   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
+</div>
+<div id="frame">
+  <div id="frametitle">贪吃蛇</div>
+  <div id="framebody">
+      <div id="bodyleft">
+        
+        <div id="main">
+        </div>
+      </div>
+      <div id="bodyright">    
+          <div id="score"><br />得分：<br /><span>0</span></div>
+          <div id="level"><br />级别：<br /><span>1</span></div>    
+          <div id="menu">
+            <br />
+            <input type="button" id="btnControl" value="开始" />
+          </div>   
+      </div>    
+  </div>
+  <div id="msg">Msg</div>
+</div>
+<div><br /><a href="index.html">返回主页</a></div>
+</body>
+</html>

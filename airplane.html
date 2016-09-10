@@ -1,0 +1,466 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>开飞机</title>
+<script src="jquery-1.9.1.min.js"></script>
+<style>
+    body{
+	    text-align:center;
+	    background-color:#1B272C;
+        font-family:LiSu,KaiTi;
+        font-size:18px;
+        padding-top:20px;
+        color:#fff;
+	    }
+    #frame{
+        box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        border-radius:6px;
+        -o-box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
+        -o-border-radius:6px;
+        -moz-transition:-moz-transform 2s; 
+        -webkit-transition:-webkit-transform 2s;
+        -o-transition:-o-transform 2s;
+
+	    padding:2px;
+        background-color:#ccc;
+        margin-left:auto;
+	    margin-right:auto;
+	    width:339px;
+	    height:374px;
+	    border:outset 2px #CCCCCC;
+        position:relative;
+	    }
+    #frametitle{
+        font-weight:600;
+	    width:100%;
+	    height:20px;
+	    background-color:#CCCCCC;
+        color:black;
+	    }
+    #framebody {
+        height:352px;
+        background-color:#1B272C;
+    }
+    #bodyleft {
+        height:100%;
+        float:left;
+        border-right:solid 1px #CCCCCC;
+        margin-right:-1px;
+        position:relative;
+    }
+    #bodyright {
+        width:80px;
+        height:100%;
+        float:right;
+        border:solid 0px green;
+    }
+    #main {
+        border-top:solid 1px #CCCCCC ;
+        width:100%;
+        height:100%;
+        background-color:#000;
+    }
+   
+    .box {
+        border-right: dashed 1px #1B272C;
+        border-bottom: dashed 1px #1B272C;
+        float: left;
+    }
+   #btnControl {
+        width:60px;
+        height:25px;
+        font-size:16px;
+        font-weight:bold;
+        background-color:#1B272C;
+        border:solid 1px #CCCCCC;
+        color:#fff;
+    }
+    #btnControl:hover {
+        background-color:rgba(204, 204, 204, 0.34);
+        cursor:pointer;
+    }
+    #msg {
+         position:absolute;
+         width:40px;
+         height:7px;
+         border-radius:15px;
+         border:solid 2px #ccc;
+         background-color:#010424;
+         padding-top:20px;
+         top:140px;
+         left:-10px;
+         font-size:35px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+         color:red;
+         display:none;
+    }  
+</style>
+<script type="text/javascript">
+    $(function () {
+        //使用HTML5的Canvas绘制喇叭
+        var c = document.getElementById("myCanvas");
+        var cxt = c.getContext("2d");
+        cxt.strokeStyle = "#ccc";
+        //声音开关 true/false
+        var musicStatus;
+        //锁定
+        var locked = false;
+        var audioMove = "Move.wav";
+        var audioCrash = "Crash.wav";
+        //绘制喇叭打开状
+        var musicOpen = function () {
+            cxt.beginPath();
+            cxt.clearRect(0, 0, 50, 50);
+            cxt.moveTo(15, 15);
+            cxt.lineTo(6, 15);
+            cxt.lineTo(6, 25);
+            cxt.lineTo(15, 25);
+            cxt.lineTo(15, 15);
+            cxt.lineTo(25, 8);
+            cxt.lineTo(25, 32);
+            cxt.lineTo(15, 25);
+            cxt.stroke();
+            cxt.moveTo(30, 15);
+            cxt.arc(16, 20, 15, -0.2, 0.2, false);
+            cxt.stroke();
+            cxt.moveTo(35, 12);
+            cxt.arc(22, 20, 15, -0.5, 0.5, false);
+            cxt.stroke();
+            cxt.moveTo(39, 10);
+            cxt.arc(28, 20, 15, -0.8, 0.8, false);
+            cxt.stroke();
+            musicStatus = true;
+        }
+        //绘制喇叭关闭状
+        var musicClose = function () {
+            cxt.beginPath();
+            cxt.clearRect(0, 0, 50, 50);
+            cxt.moveTo(15, 15);
+            cxt.lineTo(6, 15);
+            cxt.lineTo(6, 25);
+            cxt.lineTo(15, 25);
+            cxt.lineTo(15, 15);
+            cxt.lineTo(25, 8);
+            cxt.lineTo(25, 32);
+            cxt.lineTo(15, 25);
+            cxt.stroke();
+            cxt.moveTo(6, 6);
+            cxt.lineTo(35, 35);
+            cxt.stroke();
+            musicStatus = false;bg
+        }
+        //创建audio
+        var au = document.createElement("audio");
+        //播放音效
+        var playAudio = function (url) {
+            if (au.ended)
+            { locked = false; }
+            if ((!locked || url == audioCrash) && musicStatus) {
+                locked = true;
+                au.src = url;
+                au.play();
+            }
+        }
+        musicOpen();
+        //声音控制
+        $("#myCanvas").click(function () {musicStatus?musicClose(): musicOpen(); });
+
+
+        //单格边长（包含边框）
+        var boxSide = 22;
+        //背景格行数
+        var bgRow = 16;
+        //背景格列数
+        var bgCol =11;
+        //方格背景图像
+        var boxBgImg = "BlockBg.gif"
+        //背景图像调整后的大小
+        var bgImgSize = boxSide * 7 + "px " + boxSide * 5+"px";
+        //背景图像一组X坐标值
+        var bgImgPositionXs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4, -boxSide * 5, -boxSide * 6];
+        //背景图像一组Y坐标值
+        var bgImgPositionYs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4];
+        //我机背景图像X坐标值
+        var meBgPositionX = bgImgPositionXs[4];
+        //我机背景图像Y坐标值
+        var meBgPositionY = bgImgPositionYs[3];
+        //敌机背景图像X坐标值
+        var enemyBgPositionX = bgImgPositionXs[2];
+        //敌机背景图像Y坐标值
+        var enemyBgPositionY = bgImgPositionYs[3];
+        //我机初始位置
+        var mePositions = [[0, bgRow - 4], [4, bgRow - 4], [8, bgRow - 4]];
+        //敌机初始位置
+        var enemyPositions = [[0, -4], [4, -4], [8, -4]];
+        //当前所有敌机对象
+        var currentEnemyPlanes = [];
+        //当前我机对象
+        var currentMePlane;
+        //下降计数器
+        var downNum = 0;
+        //计时器Id
+        var timerId;
+        //得分
+        var score = 0;
+        //级别
+        var level = 1;
+        //速度
+        var speed = 500;
+        //每一等级分数
+        var levelScore = 3000;
+
+
+        
+        //绘制一个敌机单格
+        var createEnemyBox = function (x, y) {
+            if (x < 0 || y < 0) return;
+            var i = y * bgCol + x;
+            $(".box:eq(" + i + ")").css({ "width": boxSide + "px", "height": boxSide + "px", "background": "url(" + boxBgImg + ")", "background-size": bgImgSize, "backgroundPosition": enemyBgPositionX + "px " + enemyBgPositionY + "px", "border": "0px" });
+            $(".box:eq(" + i + ")").attr("status", "enemy"); 
+        }
+        //绘制一个我机单格
+        var createMeBox = function (x, y) {
+            if (x < 0 || y < 0) return;
+            var i = y * bgCol + x;
+            $(".box:eq(" + i + ")").css({ "width": boxSide + "px", "height": boxSide + "px", "background": "url(" + boxBgImg + ")", "background-size": bgImgSize, "backgroundPosition": meBgPositionX + "px " + meBgPositionY + "px", "border": "0px" });
+            $(".box:eq(" + i + ")").attr("status", "me");
+           // $(".box:eq(" + i + ")").html("me");
+        }
+        //绘制一个敌机
+        var drawEnemyPlane = function (enemyPlane) {
+            for (var i = 0; i < enemyPlane.length; i++)
+            { createEnemyBox(enemyPlane[i][0], enemyPlane[i][1]); }
+        }
+        //------创建一个敌机--------
+        var createEnemyPlane = function (x, y) {
+            var enemyPlane = [[x + 1, y], [x, y + 1], [x + 1, y + 1], [x + 2, y + 1], [x + 1, y + 2], [x, y + 3], [x + 1, y + 3], [x + 2, y + 3]];
+            drawEnemyPlane(enemyPlane);
+            currentEnemyPlanes.push(enemyPlane);
+        }
+        //绘制一个我机
+        var drawMePlane = function (mePlane) {
+            for (var i = 0; i < mePlane.length; i++)
+            { createMeBox(mePlane[i][0], mePlane[i][1]); }
+        }
+        //------创建一个我机--------
+        var createMePlane = function (x, y) {
+            var mePlane = [[x + 1, y], [x, y + 1], [x + 1, y + 1], [x + 2, y + 1], [x + 1, y + 2], [x, y + 3], [x + 1, y + 3], [x + 2, y + 3]];
+            drawMePlane(mePlane);
+            currentMePlane = mePlane;
+        }
+        //清除一个单格
+        var clearActBox = function (x, y) {
+            if (x < 0 || y < 0) return;
+            var i = y * bgCol + x;
+            $(".box:eq(" + i + ")").css({ "width": boxSide - 1 + "px", "height": boxSide - 1 + "px", "background": "", "borderRight": "dashed 1px #1B272C", "borderBottom": "dashed 1px #1B272C", "borderLeft": "0px", "borderTop": "0px" });
+            $(".box:eq(" + i + ")").attr("status", "null");
+           // $(".box:eq(" + i + ")").html("null");
+        }
+        //清除一个敌机
+        var clearEnemyPlane = function (enemyPlane) {
+            for (var i = 0; i < enemyPlane.length; i++)
+            { clearActBox(enemyPlane[i][0], enemyPlane[i][1]); }
+        }
+        //清除我机
+        var clearMePlane = function (mePlane) {
+            for (var i = 0; i < mePlane.length; i++)
+            { clearActBox(mePlane[i][0], mePlane[i][1]); }
+        }
+        //清除所有单格
+        var clearAllBox = function () {
+            $(".box").css({ "width": boxSide - 1 + "px", "height": boxSide - 1 + "px", "background": "", "borderRight": "dashed 1px #1B272C", "borderBottom": "dashed 1px #1B272C", "borderLeft": "0px", "borderTop": "0px" });
+            $(".box").attr("status", "null");
+        }
+        //初始化
+        var init = function () {
+            //加载背景网格
+            for (var i = 0; i < bgCol * bgRow; i++) {
+                var box = $("<div class='box' status='null'></div>");
+                $("#main").append(box);
+            }
+            $(".box").css({"width":boxSide-1+"px","height":boxSide-1+"px"});
+            $("#bodyleft").css("width", bgCol * boxSide + "px");
+            $("#framebody").css("height",bgRow * boxSide+"px");
+            $("#frame").css({"width": bgCol * boxSide + 82 + "px","height":bgRow*boxSide+22+"px"});
+ 
+            createMePlane(mePositions[1][0], mePositions[1][1]);
+            switch (randNum(3)) {
+                case 0:
+                    createEnemyPlane(enemyPositions[1][0], enemyPositions[1][1]);
+                    createEnemyPlane(enemyPositions[2][0], enemyPositions[2][1]);
+                    break;
+                case 1:
+                    createEnemyPlane(enemyPositions[0][0], enemyPositions[0][1]);
+                    createEnemyPlane(enemyPositions[2][0], enemyPositions[2][1]);
+                    break;
+                case 2:
+                    createEnemyPlane(enemyPositions[0][0], enemyPositions[0][1]);
+                    createEnemyPlane(enemyPositions[1][0], enemyPositions[1][1]);
+                    break;
+            }
+        }
+        //所有敌机下降一格
+        var enemyPlaneDown = function () {
+            //是否碰撞
+            for (var i = 0; i < currentEnemyPlanes.length; i++) {
+                for (var j = 0; j < currentEnemyPlanes[i].length; j++) {
+                    var n = (currentEnemyPlanes[i][j][1] + 1) * bgCol + currentEnemyPlanes[i][j][0];
+                    if (n>0&&$(".box:eq(" + n + ")").attr("status") == "me")
+                    {
+                        playAudio(audioCrash);
+                        clearInterval(timerId);
+                        showMsg("你死掉了。");
+                        return;
+                    }
+                }
+            }
+            //清除
+            for (var i = 0; i < currentEnemyPlanes.length; i++)
+            {  
+                clearEnemyPlane(currentEnemyPlanes[i]);   
+            }
+            //计算
+            var hasMiss = false;
+            for (var i = 0; i < currentEnemyPlanes.length; i++) {
+                var hM= true;
+                for (var j = 0; j < currentEnemyPlanes[i].length; j++) {
+                    currentEnemyPlanes[i][j][1] += 1;
+                    if (currentEnemyPlanes[i][j][1] < 16)
+                    { hM = false; }
+                }
+                if (hM) hasMiss = true;
+            }
+            if (hasMiss)
+            {
+                currentEnemyPlanes.shift();//删除第一个
+                score += 100; 
+                if (score % levelScore == 0)
+                {
+                    level = score / levelScore+1;
+                    if (level > 10)
+                    {
+                        clearInterval(timerId);
+                        showMsg("恭喜！通关了！");
+                        return;
+                    }
+                    speed = 500 - (level - 1) * 50;
+                    clearInterval(timerId);
+                    timerId = setInterval(timerEvent, speed);
+                }
+                $("#score span").html(score);
+                $("#level span").html(level);
+            }
+            //绘制
+            for (var i = 0; i < currentEnemyPlanes.length; i++) {
+                drawEnemyPlane(currentEnemyPlanes[i]);
+            }
+            downNum++;
+            
+        }
+        //显示消息
+        var showMsg = function (m) {
+            $("#msg").html(m).css("display", "block").animate({ "width": "400px", "height": "70px" }, 400);
+        }
+        //我机左移
+        var mePlaneLeft = function () {
+            if (currentMePlane[0][0] - 4 < 0)
+                return;
+            clearMePlane(currentMePlane);
+            for (var i = 0; i < currentMePlane.length; i++)
+            {
+                currentMePlane[i][0] -= 4;
+            }
+            drawMePlane(currentMePlane);
+            playAudio(audioMove);
+        }
+        //我机右移
+        var mePlaneRight = function () {
+            if (currentMePlane[0][0] + 4 >bgCol-1)
+                return;
+            clearMePlane(currentMePlane);
+            for (var i = 0; i < currentMePlane.length; i++) {
+                currentMePlane[i][0] += 4;
+            }
+            drawMePlane(currentMePlane);
+            playAudio(audioMove);
+        }
+        //创建一个小于指定值的随机整数
+        var randNum=function(n)
+        {
+            return Math.floor(Math.random()*n);
+        }
+        //控制方向
+        $(document).keydown(function (e) {
+                var key = e.which;
+                switch (key) {
+                    case 37: mePlaneLeft(); break;
+                    case 39: mePlaneRight(); break;
+                }
+        });
+        //计时器事件
+        var timerEvent = function () {
+            enemyPlaneDown();
+            if (downNum == 10)
+            {
+                switch (randNum(3))
+                {
+                    case 0:
+                        createEnemyPlane(enemyPositions[1][0], enemyPositions[1][1]);
+                        createEnemyPlane(enemyPositions[2][0], enemyPositions[2][1]);
+                        break;
+                    case 1:
+                        createEnemyPlane(enemyPositions[0][0], enemyPositions[0][1]);
+                        createEnemyPlane(enemyPositions[2][0], enemyPositions[2][1]);
+                        break;
+                    case 2:
+                        createEnemyPlane(enemyPositions[0][0], enemyPositions[0][1]);
+                        createEnemyPlane(enemyPositions[1][0], enemyPositions[1][1]);
+                        break;
+                }
+                downNum = 0;
+            }
+        }
+        //开始按钮
+        $("#btnControl").click(function () {
+            if ($(this).val() == "开始") {
+                timerId = setInterval(timerEvent, speed);
+                $(this).val("暂停");
+            }
+            else {
+                clearInterval(timerId);
+                $(this).val("开始");
+            }
+        });
+        init();
+    });
+</script>
+</head>
+<body>
+<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+   <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
+   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
+</div>
+<div id="frame">
+  <div id="frametitle">开飞机</div>
+  <div id="framebody">
+      <div id="bodyleft">
+        
+        <div id="main">
+        </div>
+      </div>
+      <div id="bodyright">    
+          <div id="score"><br />得分：<br /><span>0</span></div>
+          <div id="level"><br />级别：<br /><span>1</span></div>    
+          <div id="menu">
+            <br />
+            <input type="button" id="btnControl" value="开始" />
+          </div>   
+      </div>    
+  </div>
+  <div id="msg"></div>
+</div>
+<div><br /><a href="index.html">返回主页</a></div>
+</body>
+</html>

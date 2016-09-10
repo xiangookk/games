@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>主页</title>
+<style>
+    body {
+        background-color:#1B272C;
+        color:#ddd;
+        font-family:YouYuan,LiSu;
+    }
+    #pageframe {
+        width:700px;
+        height:500px;
+        margin-left:auto;
+        margin-right:auto;
+        margin-top:100px;
+        border:solid 0px #fff;
+        text-align:center;
+    }
+    ul {
+        list-style:none;
+        border:solid 0px red;
+       
+    }
+    ul li {
+        float:left;
+        margin:8px;
+        width:190px;
+        height:180px;
+        cursor:pointer;
+        text-align:center;
+        border:dashed 1px gray;
+        border-radius:5px;
+    }
+    ul li:hover {
+        width:190px;
+        height:180px;
+        cursor:pointer;
+        text-align:center;
+        border:solid 1px gray;
+        box-shadow:0 0 8px #fff;
+        text-shadow:0px 0px 6px yellow;
+    }
+    li img {
+        width:180px;
+        height:160px;
+    }
+</style>
+</head>
+
+<body>
+    <div id="pageframe">
+        <div style="font-size:18px; text-shadow:0px 0px 6px yellow">重温儿时经典方块游戏</div>
+        <ul>
+            <li onclick="location.href = 'tetris.html'"><img src="tetris.png" /><br />俄罗斯方块</li>
+            <li onclick="location.href = 'snakey.html'"><img src="snakey.png" /><br />贪吃蛇</li>
+            <li onclick="location.href = 'airplane.html'"><img src="airplane.png" /><br />开飞机</li>
+            <li onclick="location.href = 'tankwar.html'"><img src="tankwar.png" /><br />坦克大战</li>
+            <li onclick="location.href = 'canvas1.html'"><img src="canvas1.png" /><br />画画板</li>
+            <li onclick="location.href = 'My12306.rar'"><br />火车票订票软件<br><i><u style='color:yellow'>点击下载</u></i></li>
+        </ul>
+    </div>
+    
+</body>
+</html>
