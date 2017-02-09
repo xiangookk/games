@@ -164,7 +164,9 @@ else
 		padding:6px;
 	}
 </style>
+<!--<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>-->
 <script type="text/javascript"> 
+//document.write(returnCitySN["cip"]+' '+returnCitySN["cname"]);
         //使用HTML5的Canvas绘制喇叭
         var cxt;
         var musicStatus;
@@ -745,35 +747,35 @@ function getCookie(name)
 </script>
 </head>
 <body>
-    <bgsound id="snd" loop="1">
-<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
-   <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
-   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
-</div>
-<div id="frame">
-  <div id="frametitle">俄罗斯方块</div>
-  <div id="framebody">
-      <div id="bodyleft">
-        <div id="menu">
-            <input type="button" value="开始/暂停" />
-        </div>
-        <div id="main">
-        </div>
-          <div id="addscore" class="showScore"></div>
-      </div>
-      <div id="bodyright">
-          <div id="next"></div>
-          <div id="score"><br />得分：<br /><span>0</span></div>
-          <div id="leve"><br />关卡：<br /><span>1</span></div><br />
-          <div id="gametype">
-              <input type="radio" name="type" id="pt"  value="普通" checked="checked"/><label for="pt">普通</label> 
-              <input type="radio" name="type" id="gj"  value="高级"/><label for="gj">高级</label>
-          </div>
-      </div>    
-  </div>
-</div>
-<div id="msg" class="showMsg"></div>
-<div id="sort"></div>
-<div><br /><a href="index.html">返回主页</a></div>
+    <bgsound id="snd" loop="1"/>
+	<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+	   <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
+	   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
+	</div>
+	<div id="frame">
+	  <div id="frametitle">俄罗斯方块</div>
+	  <div id="framebody">
+		  <div id="bodyleft">
+			<div id="menu">
+				<input type="button" value="开始/暂停" />
+			</div>
+			<div id="main">
+			</div>
+			  <div id="addscore" class="showScore"></div>
+		  </div>
+		  <div id="bodyright">
+			  <div id="next"></div>
+			  <div id="score"><br />得分：<br /><span>0</span></div>
+			  <div id="leve"><br />关卡：<br /><span>1</span></div><br />
+			  <div id="gametype">
+				  <input type="radio" name="type" id="pt"  value="普通" checked="checked"/><label for="pt">普通</label> 
+				  <input type="radio" name="type" id="gj"  value="高级"/><label for="gj">高级</label>
+			  </div>
+		  </div>    
+	  </div>
+	</div>
+	<div id="msg" class="showMsg"></div>
+	<div id="sort"></div>
+	<div><br /><a href="index.html">返回主页</a></div>
 </body>
 </html>

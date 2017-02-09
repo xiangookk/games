@@ -1,27 +1,24 @@
 <?php
-/*echo '$_POST接收:<br/>'; 
-print_r($_POST); 
-  
-echo '$GLOBALS[\'HTTP_RAW_POST_DATA\']接收:<br/>'; 
-print_r($GLOBALS['HTTP_RAW_POST_DATA']); 
 
-echo 'php://input接收:<br/>'; 
-$data = file_get_contents('php://input'); 
-print_r(urldecode($data));
-*/
 $do_type=$_POST["do_type"];
 $cname=$_POST["cname"];
 $type=$_POST["type"];
 $score=$_POST["score"];
 
-$con = mysql_connect("mysql.2freehosting.com","u109760551_sxx","86641813");
-if (!$con)
-  die('Could not connect: ' . mysql_error());
+$number=$_POST["number"];
+$pass=$_POST["pass"];
 
-mysql_select_db("u109760551_game", $con);
+//$con = mysql_connect("127.0.0.1","zjwdb_6130248","Sxx123456");
+$con = mysql_connect("127.0.0.1","root","123");
+if (!$con)
+{	
+	die('Could not connect: ' . mysql_error());
+}
+//mysql_select_db("zjwdb_6130248", $con);
+mysql_select_db("game", $con);
 mysql_query("SET NAMES 'utf8'",$con);
 
-if ($do_type==1)
+if ($do_type==1)//新增或更新
 {
 	$sql="select * from clientuser where GameType='".$type."' and CName='".$cname."'";
 	$result = mysql_query($sql);
@@ -30,24 +27,24 @@ if ($do_type==1)
 	if($count>0)
 	{
 		if($score > mysql_result($result,0,'HighScore')){
-			$sql="update clientuser set HighScore=".$score.",LastLoginTime=now() where GameType='".$type."' and CName='".$cname."'";
+			$sql="update clientuser set HighScore=".$score.",LastUpdateTime=now() where GameType='".$type."' and CName='".$cname."'";
 		}else{
 			return;
 		}		
 	}
 	else
 	{
-		$sql="INSERT INTO clientuser (CName,GameType, HighScore, CreateTime,LastLoginTime) 
+		$sql="INSERT INTO clientuser (CName,GameType, HighScore, CreateTime,LastUpdateTime) 
 			  VALUES ('".$cname."', '".$type."',".$score.", now(),now())";
 	}
 		
 	//print_r($sql);
     mysql_query($sql);
 }
-elseif ($do_type==2)
+elseif ($do_type==2)//获取排行数据
 {
 	
-	$result = mysql_query("SELECT * FROM clientuser where GameType='".$type."' order by HighScore desc");
+	$result = mysql_query("SELECT * FROM clientuser where GameType='".$type."' order by HighScore desc limit 0, 10");
 
 	echo "<table border='0'>
 	<tr>
@@ -67,8 +64,36 @@ elseif ($do_type==2)
 		  $num++;
 	  }
 	echo "</table>";
-}else
-{}
+}
+elseif($do_type==8)//查询ofo数据
+{
+	$sql="select password from ofodata where Number='".$number."' ";
+	$result = mysql_query($sql);
+	$pass = mysql_fetch_row($result);
+
+	echo $pass[0];
+}
+elseif($do_type==9)//保存ofo数据
+{
+	$sql="select * from ofodata where Number='".$number."' ";
+	$result = mysql_query($sql);
+	$count=mysql_num_rows($result);
+
+	if($count>0)
+	{		
+		$sql="update ofodata set Password=".$pass." where Number='".$number."'";
+	}
+	else
+	{
+		$sql="INSERT INTO ofodata (Number,Password, type) 
+			  VALUES ('".$number."', '".$pass."','".$type."')";
+	}
+		
+	//print_r($sql);
+	mysql_query($sql);
+    $res = mysql_affected_rows();
+	echo $res;
+}
 
 mysql_close($con);
 ?>
