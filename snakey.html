@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -96,6 +97,23 @@
          color:red;
          display:none;
     }
+	#sort{
+		 position:absolute;
+         width:240px;
+         height:400px;
+         border-radius:5px;
+         border:solid 2px #ccc;
+         background-color:#010424;
+         padding:20px;
+         top:100px;
+         left:50px;
+         font-size:15px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+	}
+	td{
+		padding:6px;
+	}
 </style>
 <script type="text/javascript">    
     $(function () {  
@@ -306,7 +324,9 @@
             var n = y * bgCol + x;
             if ($(".box:eq(" + n + ")").attr("status") == "active") {
                 clearInterval(timerId);
-                playAudio(audioCrash);      
+                playAudio(audioCrash);    
+				//得分存入数据库
+				$.post("doPost.php",{cname:getCookie('user'),type:'snakey',score:score,do_type:1});				
                 showMsg("笨蛋，撞到屁股啦！");      
             }
             else if ($(".box:eq(" + n + ")").attr("status") == "food") {
@@ -341,10 +361,15 @@
             direction = "right";
             clearAllBox();
             createSnakeBody();
-            createRandFood();
+            createRandFood();	
         }
+		//获取排名
+		var getSort=function(){
+			$.post("doPost.php",{do_type:2,type:'snakey'},function(d){$("#sort").html(d);});
+		}
         //初始化
         var init = function () {
+			getSort();
             //加载背景网格
             for (var i = 0; i < bgRow * bgCol; i++) {
                 var box = $("<div class='box' status='null'></div>");
@@ -355,8 +380,19 @@
             $("#framebody").css("height", bgRow * boxSide + "px");
             $("#frame").css({ "width": bgCol * boxSide + 83 + "px", "height": bgRow * boxSide + 22 + "px" });
             initLevel();
-            musicOpen();
+            musicOpen();			
         }
+		//输入一个名称
+		var inputName=function(){
+		    if(getCookie("user")==null)
+			{
+				var name=prompt("给自己起一个响亮的名字：","");
+				if(name==null)
+				{name= "没有名字的可怜虫"}
+				document.cookie="user="+name;
+			}
+			$("#user").html("欢迎你：<span style='color:yellow'>"+getCookie("user")+"</span>");
+		}
         var isMove = false;
         //控制方向
         $(document).keydown(function (e) {
@@ -382,11 +418,21 @@
             }
         });
         init();
+		inputName();
     });
+function getCookie(name)
+{
+	var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+	if(arr=document.cookie.match(reg))
+	{return decodeURIComponent(arr[2]);}
+	else
+	{return null;}
+}
 </script>
 </head>
 <body>
-<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+<div id="user"></div>
+<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">  
    <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
    <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
 </div>
@@ -409,6 +455,7 @@
   </div>
   <div id="msg">Msg</div>
 </div>
+<div id="sort"></div>
 <div><br /><a href="index.html">返回主页</a></div>
 </body>
 </html>

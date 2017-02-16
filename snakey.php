@@ -1,17 +1,4 @@
-<?php 
-$userName="游客";
-if (isset($_COOKIE["user"]))
-{
-	$userName=$_COOKIE["user"];
-    echo "欢迎你， " . $userName. "!<br />";
-}
-else
- {
-      $userName="游客".rand(100000,999999);
-      setcookie("user", $userName, time()+3600*24*7);
-      echo "欢迎你， （新人）".$userName."!<br />";
-}
-?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -395,6 +382,15 @@ else
             initLevel();
             musicOpen();			
         }
+		//输入一个名称
+		var inputName=function(){
+		    if(getCookie("user")==null)
+			{
+				var name=prompt("给自己起一个响亮的名字：","");
+				document.cookie="user="+name;
+			}
+			$("#user").text("欢迎你："+getCookie("user"));
+		}
         var isMove = false;
         //控制方向
         $(document).keydown(function (e) {
@@ -432,7 +428,8 @@ function getCookie(name)
 </script>
 </head>
 <body>
-<div style="height:42px;width:160px; margin-left:auto;margin-right:auto; ">
+<div style="height:62px;width:160px; margin-left:auto;margin-right:auto; ">
+   <div id="user"></div>
    <div style="height:30px;width:100px;padding-top:10px;float:left; ">声音控制：</div>
    <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
 </div>
