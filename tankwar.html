@@ -3,7 +3,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
    <title>坦克大战</title>
-<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
 <style type="text/css">
     body{
 	    text-align:center;
@@ -18,9 +17,9 @@
         border-radius:6px;
         -o-box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
         -o-border-radius:6px;
-        -moz-transition:-moz-transform 2s; 
+        /*-moz-transition:-moz-transform 2s; 
         -webkit-transition:-webkit-transform 2s;
-        -o-transition:-o-transform 2s;
+        -o-transition:-o-transform 2s;*/
 
 	    padding:2px;
         background-color:#ccc;
@@ -62,12 +61,7 @@
         background-color:#000;
     }
    
-    .box {
-        border-right: dashed 1px #1B272C;
-        border-bottom: dashed 1px #1B272C;
-        float: left;
-    }
-   #btnControl {
+   #btnSetting,#btnControl,#btnSave,#btnClose {
         width:60px;
         height:25px;
         font-size:16px;
@@ -76,7 +70,7 @@
         border:solid 1px #CCCCCC;
         color:#fff;
     }
-    #btnControl:hover {
+    #btnSetting:hover,#btnControl:hover,#btnSave:hover,#btnClose:hover {
         background-color:rgba(204, 204, 204, 0.34);
         cursor:pointer;
     }
@@ -88,15 +82,101 @@
          border:solid 2px #ccc;
          background-color:#010424;
          padding-top:20px;
-         top:140px;
-         left:100px;
          font-size:35px;
          font-family:KaiTi,LiSu; 
          font-weight:bold;
          color:red;
          display:none;
     }  
+    #divSetting {
+         position:absolute;
+         width:330px;
+         height:160px;
+         border-radius:10px;
+         border:solid 2px #ccc;
+         background-color:#010424;
+         padding-top:20px;
+         text-align: center;
+         font-size:20px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+         color:white;
+         display:none;
+    }
+     #bossHP {
+         position:absolute;
+         width:120px;
+         height:60px;
+         left:-125px;
+         top:0px;
+         border-radius:5px;
+         border:solid 1px #ccc;
+         background-color:#010424;
+         padding-top:10px;
+         text-align: center;
+         font-size:18px;
+         font-family:KaiTi,LiSu; 
+         font-weight:bold;
+         color:white;
+         display:none;
+    }
 </style>
+</head>
+<body>
+<div style="height:42px;width:400px; margin-left:auto;margin-right:auto; ">
+   <div style="height:30px;width:350px;padding-top:10px;float:left; ">Z键或PageDown键：发射&nbsp;&nbsp; &nbsp;   声音控制：</div>
+   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
+</div>
+<div id="frame">
+  <div id="frametitle">坦克大战</div>
+  <div id="framebody">
+      <div id="bodyleft">
+        
+        <div id="main">
+        </div>
+      </div>
+      <div id="bodyright">    
+          <div id="score">得分：<br /><span>0</span></div>
+          <div id="level">级别：<br /><span>1</span></div>    
+          <div id="menu">
+            <br />
+            <input type="button" id="btnSetting" value="设置" />
+            <br /><br />
+            <input type="button" id="btnControl" value="开始" />
+          </div>   
+      </div>    
+  </div>
+  <div id="divSetting">
+      <ul style="list-style:none;padding:0px;margin:0px">
+          <li>
+              单格边长：<input type="range" id="boxWidth" min="10" max="35" style="margin-bottom:-4px"/>
+              <input type='text' value='' style='font-size:14px;width:20px;height:14px' readonly/>          
+          </li>
+          <li>
+              主窗口宽：<input type="range" id="mainWidth" min="16" max="30" style="margin-bottom:-4px"/>
+              <input type='text' value='' style='font-size:14px;width:20px;height:14px' readonly/>     
+          </li>
+          <li>
+              主窗口高：<input type="range" id="mainHeight" min="16" max="30" style="margin-bottom:-4px"/>
+              <input type='text' value='' style='font-size:14px;width:20px;height:14px' readonly/>
+          </li>
+          <li title="游戏开始前才能设置">
+              设置级别：<input type="range" id="setLevel" min="1" max="10" style="margin-bottom:-4px"/>
+              <input type='text' value='' style='font-size:14px;width:20px;height:14px' readonly/>
+          </li>
+          <li style="text-align:center">
+              <br>
+              <input type="button" id="btnSave" value="保 存"/>
+              <input type="button" id="btnClose" value="关 闭"/>
+          </li>
+      </ul>
+  </div>
+  <div id="bossHP"></div>
+  <div id="msg"></div>
+</div>
+<div><br /><a href="index.html">返回主页</a></div>
+
+<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript">
     //使用HTML5的Canvas绘制喇叭
     var cxt;
@@ -104,8 +184,7 @@
     var musicStatus;
     //锁定
     var locked = false;
-    var audioMove = "Move.wav";
-    var audioCrash = "Crash.wav";
+    var audioCrash = "audio/Crash.wav";
     //绘制喇叭打开状
     var musicOpen = function () {
         cxt.beginPath();
@@ -163,39 +242,43 @@
 
        
     //单格边长（包含边框）
-    var boxSide = 22;
+    var boxSide = 25;
     //背景格行数
-    var bgRow = 26;
+    var bgRow = 20;
     //背景格列数
-    var bgCol = 30;
+    var bgCol = 20;
     //方格背景图像
-    var boxBgImg = "BlockBg.gif"
+    var boxBgImg = "image/BlockBg.gif"
+
     //背景图像调整后的大小
-    var bgImgSize = boxSide * 7 + "px " + boxSide * 5 + "px";
+    var bgImgSize;
     //背景图像一组X坐标值
-    var bgImgPositionXs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4, -boxSide * 5, -boxSide * 6];
+    var bgImgPositionXs;
     //背景图像一组Y坐标值
-    var bgImgPositionYs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4];
+    var bgImgPositionYs;
     //我方坦克背景图像X坐标值
-    var meBgPositionX = bgImgPositionXs[4];
+    var meBgPositionX;
     //我方坦克背景图像Y坐标值
-    var meBgPositionY = bgImgPositionYs[3];
+    var meBgPositionY;
     //敌方坦克背景图像X坐标值
-    var enemyBgPositionX = bgImgPositionXs[0];
+    var enemyBgPositionX;
     //敌方坦克背景图像Y坐标值
-    var enemyBgPositionY = bgImgPositionYs[3];
+    var enemyBgPositionY;
+
     //我方初始位置
-    var mePositions = [bgCol / 2 - 1, bgRow - 3];
+    var mePositions;
     //敌方初始位置
-    var enemyPositions = [[0, 0], [bgCol / 2 - 1, 0], [bgCol - 3, 0]];
+    var enemyPositions;
     //当前所有敌人坦克对象
-    var currentEnemyTanks = [];
+    var currentEnemyTanks;
+    //当前敌人坦克Boss对象
+    var currentEnemyTankBoss;
     //当前我的坦克对象
     var currentMeTank;
     //当前所有敌方子弹对象
-    var currentEnemyBullets = [];
+    var currentEnemyBullets;
     //当前我方子弹对象
-    var currentMeBullets = [];
+    var currentMeBullets;
     //方向
     var direction = [ "left","up", "right", "down"];
 
@@ -206,15 +289,19 @@
     //敌方子弹计时器Id
     var enemyBulletTimerId;
     //敌方子弹速度
-    var enemyBulletSpeed = 200;
+    var enemyBulletSpeed = 150;
     //敌方坦克计时器Id
     var enemyTankTimerId;
-    //敌方坦克速度
-    var enemyTankSpeed = 600;
+    //我方坦克移动速度
+    var meTankSpeed = 250;
+    //敌方坦克初始移动速度
+    var enemyTankInitSpeed = 800;
+	//敌方坦克移动速度
+    var enemyTankCurrentSpeed;
     //敌方子弹发射频率计时器
     var enemyBulletRateTimerId;
     //敌方子弹发射频率
-    var enemyBulletRateSpeed = enemyTankSpeed * 4;
+    var enemyBulletRateSpeed = 2400;
 
     //敌方坦克最大数量
     var enemyTankMaxCount = 5;
@@ -225,10 +312,15 @@
     //级别
     var level = 1;
     //每一等级分数
-    var levelScore = 2000;
+    var levelScore = 1000;
     //游戏是否已运行
     var runing = false;
-
+    //是否是Boss模式
+    var isBossMode = false;
+    //Boss初始生命值
+    var bossHP=5;
+    //Boss当前生命值
+    var bossCurrentHP;
 
     //绘制一个敌方坦克单格
     var drawEnemyTankBox = function (x, y) {
@@ -260,9 +352,17 @@
         // $(".box:eq(" + i + ")").html(x);
     }
     //绘制一个敌方坦克
-    var drawEnemyTank = function (enemyTank) {
-        for (var i = 0; i < enemyTank.positions.length; i++)
-        { drawEnemyTankBox(enemyTank.positions[i][0], enemyTank.positions[i][1]); }
+    var drawEnemyTank = function (enemyTank,clearBoxs=[]) {
+        if(clearBoxs.length==0)
+        {
+            for (var i = 0; i < enemyTank.positions.length; i++)
+            { drawEnemyTankBox(enemyTank.positions[i][0], enemyTank.positions[i][1]); }
+        }
+        else
+        {
+            for (var i = 0; i < clearBoxs.length; i++)
+           { drawEnemyTankBox(enemyTank.positions[clearBoxs[i]][0], enemyTank.positions[clearBoxs[i]][1]); }
+        }       
     }
     //创建一个敌方坦克
     var createEnemyTank = function (x, y, d) {
@@ -272,18 +372,31 @@
                 _position = [[x + 1, y], [x, y + 1], [x + 2, y + 1], [x + 1, y + 1], [x, y + 2], [x + 2, y + 2]];
                 break;
             case "down":
-                _position = [[x + 1, y + 2], [x + 2, y + 1], [x, y + 1], [x, y], [x + 2, y], [x + 1, y + 1]];
+                _position = [[x + 1, y + 2], [x + 2, y + 1], [x, y + 1], [x + 1, y + 1], [x + 2, y], [x, y]];
                 break;
             case "left":
-                _position = [[x, y + 1], [x + 1, y + 2], [x + 1, y], [x + 2, y], [x + 1, y + 1], [x + 2, y + 2]];
+                _position = [[x, y + 1], [x + 1, y + 2], [x + 1, y], [x + 1, y + 1], [x + 2, y + 2], [x + 2, y]];
                 break;
             case "right":
-                _position = [[x + 2, y + 1], [x + 1, y], [x + 1, y + 2], [x, y], [x + 1, y + 1], [x, y + 2]];
+                _position = [[x + 2, y + 1], [x + 1, y], [x + 1, y + 2],  [x + 1, y + 1], [x, y],[x, y + 2]];
                 break;
         }
         var enemyTank = { baseDot: [x, y], positions: _position, direction: d };
         drawEnemyTank(enemyTank);
         currentEnemyTanks.push(enemyTank);
+    }
+    //创建一个敌方坦克BOSS
+    var createEnemyTankBoss = function (x, y) {
+        var _position = [[x, y], [x + 2, y], [x + 4, y], [x + 6, y],
+                         [x, y+1], [x + 1, y+1], [x + 2, y+1], [x + 3, y+1], [x + 4, y+1], [x + 5, y+1], [x + 6, y+1],
+                         [x, y+2], [x + 2, y+2], [x + 4, y+2], [x + 6, y+2],
+                         [x, y+3], [x + 1, y+3], [x + 2, y+3], [x + 3, y+3], [x + 4, y+3], [x + 5, y+3], [x + 6, y+3],
+                         [x + 1, y+4], [x + 3, y+4], [x + 5, y+4]
+                         ];
+               
+        var enemyTankBoss = { baseDot: [x, y], positions: _position, MoveDirection:"left"};
+        drawEnemyTank(enemyTankBoss);
+        currentEnemyTankBoss=enemyTankBoss;
     }
     //返回一个敌方坦克（不添加到集合，改变方向）
     var getEnemyTank = function (x, y, d) {
@@ -307,25 +420,33 @@
         return enemyTank;
     }
     //绘制一个我方坦克
-    var drawMeTank = function (meTank) {
-        for (var i = 0; i < meTank.positions.length; i++)
-        { drawMeTankBox(meTank.positions[i][0], meTank.positions[i][1]); }
+    var drawMeTank = function (meTank,clearBoxs=[]) {
+        if(clearBoxs.length==0)
+        {
+            for (var i = 0; i < meTank.positions.length; i++)
+            { drawMeTankBox(meTank.positions[i][0], meTank.positions[i][1]); }
+        }
+        else
+        {
+            for (var i = 0; i < clearBoxs.length; i++)
+           { drawMeTankBox(meTank.positions[clearBoxs[i]][0], meTank.positions[clearBoxs[i]][1]); }
+        }       
     }
     //创建一个我方坦克
     var createMeTank = function (x, y, d) {
         var _position;
         switch (d) {
             case "up":
-                _position = [[x + 1, y], [x, y + 1], [x + 2, y + 1],[x + 1, y + 1],  [x, y + 2], [x + 2, y + 2]];
+                _position = [[x + 1, y], [x, y + 1], [x + 2, y + 1], [x + 1, y + 1], [x, y + 2], [x + 2, y + 2]];
                 break;
             case "down":
-                _position = [[x + 1, y + 2], [x + 2, y + 1], [x, y + 1],[x, y], [x + 2, y],  [x + 1, y + 1]];
+                _position = [[x + 1, y + 2], [x + 2, y + 1], [x, y + 1], [x + 1, y + 1], [x + 2, y], [x, y]];
                 break;
             case "left":
-                _position = [[x, y + 1],[x + 1, y + 2], [x + 1, y], [x + 2, y], [x + 1, y + 1],  [x + 2, y + 2]];
+                _position = [[x, y + 1], [x + 1, y + 2], [x + 1, y], [x + 1, y + 1], [x + 2, y + 2], [x + 2, y]];
                 break;
             case "right":
-                _position = [[x + 2, y + 1],  [x + 1, y], [x + 1, y + 2], [x, y],[x + 1, y + 1], [x, y + 2]];
+                _position = [[x + 2, y + 1], [x + 1, y], [x + 1, y + 2],  [x + 1, y + 1], [x, y],[x, y + 2]];
                 break;
         }
         var meTank = { baseDot: [x, y], positions: _position, direction: d };
@@ -362,9 +483,19 @@
         $(".box:eq(" + i + ")").attr("status", "null");
     }
     //清除一个坦克
-    var clearTank = function (tank) {
-        for (var i = 0; i < tank.positions.length; i++)
-        { clearActBox(tank.positions[i][0], tank.positions[i][1]); }
+    //clearBoxs:清除一个坦克中方格索引，例 [3,4,5]
+    var clearTank = function (tank,clearBoxs=[]) {
+        if(clearBoxs.length==0)
+        {
+            for (var i = 0; i < tank.positions.length; i++)
+           { clearActBox(tank.positions[i][0], tank.positions[i][1]); }
+        }
+        else
+        {
+            for (var i = 0; i < clearBoxs.length; i++)
+           { clearActBox(tank.positions[clearBoxs[i]][0], tank.positions[clearBoxs[i]][1]); }
+        }
+        
     }
     //清除一个子弹
     var clearBullet = function (bullet) {
@@ -392,12 +523,13 @@
     }
 
 
-    //我方坦克移动一格z
+    //我方坦克移动一格
     var meTankMove = function () {
+        if(isBossMode) return;
         switch (currentMeTank.direction) {
             case "up":
                 if (currentMeTank.positions[0][1] - 1 < 0)
-                    return;
+                    break;
                 var n0 = (currentMeTank.positions[0][1] - 1) * bgCol + currentMeTank.positions[0][0];
                 var n1 = (currentMeTank.positions[1][1] - 1) * bgCol + currentMeTank.positions[1][0];
                 var n2 = (currentMeTank.positions[2][1] - 1) * bgCol + currentMeTank.positions[2][0];
@@ -406,16 +538,16 @@
                     || $(".box:eq(" + n2 + ")").attr("status") == "enemyTank") {
                     break;
                 }
-                clearTank(currentMeTank);
+                clearTank(currentMeTank,[3,4,5]);
                 for (var i = 0; i < currentMeTank.positions.length; i++) {
                     currentMeTank.positions[i][1] -= 1;
                 }
                 currentMeTank.baseDot[1] -= 1;
-                drawMeTank(currentMeTank);
+                drawMeTank(currentMeTank,[0,1,2]);
                 break;
             case "down":       
                 if (currentMeTank.positions[0][1] + 1 > bgRow - 1)
-                    return;
+                    break;
                 var n0 = (currentMeTank.positions[0][1] + 1) * bgCol + currentMeTank.positions[0][0];
                 var n1 = (currentMeTank.positions[1][1] + 1) * bgCol + currentMeTank.positions[1][0];
                 var n2 = (currentMeTank.positions[2][1] + 1) * bgCol + currentMeTank.positions[2][0];
@@ -424,16 +556,16 @@
                     || $(".box:eq(" + n2 + ")").attr("status") == "enemyTank") {
                     break;
                 }
-                clearTank(currentMeTank);
+                clearTank(currentMeTank,[3,4,5]);
                 for (var i = 0; i < currentMeTank.positions.length; i++) {
                     currentMeTank.positions[i][1] += 1;
                 }
                 currentMeTank.baseDot[1] += 1;
-                drawMeTank(currentMeTank);
+                drawMeTank(currentMeTank,[0,1,2]);
                 break;
             case "left":
                 if (currentMeTank.positions[0][0] - 1 < 0)
-                    return;
+                    break;
                 var n0 = currentMeTank.positions[0][1] * bgCol + currentMeTank.positions[0][0] - 1;
                 var n1 = currentMeTank.positions[1][1] * bgCol + currentMeTank.positions[1][0] - 1;
                 var n2 = currentMeTank.positions[2][1] * bgCol + currentMeTank.positions[2][0] - 1;
@@ -442,16 +574,16 @@
                     || $(".box:eq(" + n2 + ")").attr("status") == "enemyTank") {
                     break;
                 }
-                clearTank(currentMeTank);
+                clearTank(currentMeTank,[3,4,5]);
                 for (var i = 0; i < currentMeTank.positions.length; i++) {
                     currentMeTank.positions[i][0] -= 1;
                 }
                 currentMeTank.baseDot[0] -= 1;
-                drawMeTank(currentMeTank);
+                drawMeTank(currentMeTank,[0,1,2]);
                 break;
             case "right":
                 if (currentMeTank.positions[0][0] + 1 > bgCol - 1)
-                    return;
+                    break;
                 var n0 = currentMeTank.positions[0][1] * bgCol + currentMeTank.positions[0][0]+1;
                 var n1 = currentMeTank.positions[1][1] * bgCol + currentMeTank.positions[1][0]+1;
                 var n2 = currentMeTank.positions[2][1] * bgCol + currentMeTank.positions[2][0]+1;
@@ -460,12 +592,12 @@
                     || $(".box:eq(" + n2 + ")").attr("status") == "enemyTank") {
                     break;
                 }
-                clearTank(currentMeTank);
+                clearTank(currentMeTank,[3,4,5]);
                 for (var i = 0; i < currentMeTank.positions.length; i++) {
                     currentMeTank.positions[i][0] += 1;
                 }
                 currentMeTank.baseDot[0] += 1;
-                drawMeTank(currentMeTank);
+                drawMeTank(currentMeTank,[0,1,2]);
                 break;
         }
     }
@@ -516,40 +648,73 @@
     var doMeBulletMove = function (i) {
         var n = currentMeBullets[i].position[1] * bgCol + currentMeBullets[i].position[0];
         if ($(".box:eq(" + n + ")").attr("status") == "enemyTank") {
-            for (var j = 0; j < currentEnemyTanks.length; j++) {
-                for (var k = 0; k < currentEnemyTanks[j].positions.length; k++) {
-                    if (currentEnemyTanks[j].positions[k][0] == currentMeBullets[i].position[0] && currentEnemyTanks[j].positions[k][1] == currentMeBullets[i].position[1]) {
-                        clearTank(currentEnemyTanks[j]);
-                        clearBullet(currentMeBullets[i]);
-                        currentMeBullets.splice(i, 1);
-                        currentEnemyTanks.splice(j, 1);
+            if(isBossMode){
+                playAudio(audioCrash);                
+                clearBullet(currentMeBullets[i]);
+                currentMeBullets.splice(i, 1);
 
-                        score += 100;
-                        if (score % levelScore == 0) {
-                            level = score / levelScore + 1;
-                            if (level > 10) {
-                                gameVictory();
-                                return;
+                bossCurrentHP-=1;
+                $("#bossHP").html("BOSS生命值：<span style='font-size:25px;color:orange'>"+bossCurrentHP+"</span>");
+                if(bossCurrentHP==0){
+                    level++;
+                    if (level > 10) {
+                        gameVictory();
+                        return;
+                    }
+                    $("#level span").html(level);
+                    enemyTankCurrentSpeed = enemyTankInitSpeed - (level - 1) * 50;
+                    clearInterval(enemyTankTimerId);
+                    clearInterval(enemyBulletRateTimerId);
+                    enemyTankTimerId = setInterval(enemyTankTimerEvent, enemyTankCurrentSpeed);
+                    enemyBulletRateSpeed = enemyTankCurrentSpeed * 4;
+                    enemyBulletRateTimerId = setInterval(enemyBulletRateTimerEvent, enemyBulletRateSpeed);
+                                        
+                    isBossMode=false;
+                    Init();
+                    $("#bossHP").css({display:"none"});
+                }              
+            }else{
+                for (var j = 0; j < currentEnemyTanks.length; j++) {
+                    for (var k = 0; k < currentEnemyTanks[j].positions.length; k++) {
+                        if (currentEnemyTanks[j].positions[k][0] == currentMeBullets[i].position[0] && currentEnemyTanks[j].positions[k][1] == currentMeBullets[i].position[1]) {
+                            playAudio(audioCrash);
+
+                            clearTank(currentEnemyTanks[j]);
+                            clearBullet(currentMeBullets[i]);
+                            currentMeBullets.splice(i, 1);
+                            currentEnemyTanks.splice(j, 1);
+
+                            score += 100;
+                            if (score % levelScore == 0) {
+                                isBossMode=true;
+                                Init();
+                                $("#bossHP").css({display:"block"})    
                             }
-                            enemyTankSpeed = 800 - (level - 1) * 50;
-                            clearInterval(enemyTankTimerId);
-                            clearInterval(enemyBulletRateTimerId);
-                            enemyTankTimerId = setInterval(enemyTankTimerEvent, enemyTankSpeed);
-                            enemyBulletRateTimerId = setInterval(enemyBulletRateTimerEvent, enemyBulletRateSpeed);
-                            enemyBulletRateSpeed = enemyTankSpeed * 4;
+                            $("#score span").html(score);
+                            return;
                         }
-                        $("#score span").html(score);
-                        $("#level span").html(level);
                     }
                 }
             }
+            
+        }else{
+            drawMeBullet(currentMeBullets[i]);
         }
-        drawMeBullet(currentMeBullets[i]);
+        
     }
     //我方坦克改变方向
-    var meTankChangeDirection = function (direction) {
-        clearTank(currentMeTank);
-        createMeTank(currentMeTank.baseDot[0], currentMeTank.baseDot[1], direction);
+    var meTankChangeDirection = function (direction) {        
+        if(isBossMode){
+            if(direction=="down") return;
+            if(direction=="left"&&currentMeTank.baseDot[0]==0) return;
+            if(direction=="right"&&currentMeTank.baseDot[0]+2==bgCol-1) return;
+            clearTank(currentMeTank);
+            createMeTank(currentMeTank.baseDot[0] + (direction=="left"?-1:1), currentMeTank.baseDot[1], "up");
+        }else{
+            clearTank(currentMeTank);
+            createMeTank(currentMeTank.baseDot[0], currentMeTank.baseDot[1], direction);
+        }
+        
     }
     //敌方坦克移动一格
     var enemyTankMove = function () {
@@ -575,12 +740,12 @@
                         }
                     }
                     if (!flag) break;
-                    clearTank(currentEnemyTanks[i]);
+                    clearTank(currentEnemyTanks[i],[3,4,5]);
                     for (var j = 0; j < currentEnemyTanks[i].positions.length; j++) {
                         currentEnemyTanks[i].positions[j][1] -= 1;
                     }
                     currentEnemyTanks[i].baseDot[1] -= 1;
-                    drawEnemyTank(currentEnemyTanks[i]);
+                    drawEnemyTank(currentEnemyTanks[i],[0,1,2]);
                     break;
                 case "down":
                     if (currentEnemyTanks[i].positions[0][1] + 1 > bgRow - 1)
@@ -600,12 +765,12 @@
                         }
                     }
                     if (!flag) break;
-                    clearTank(currentEnemyTanks[i]);
+                    clearTank(currentEnemyTanks[i],[3,4,5]);
                     for (var j = 0; j < currentEnemyTanks[i].positions.length; j++) {
                         currentEnemyTanks[i].positions[j][1] += 1;
                     }
                     currentEnemyTanks[i].baseDot[1] += 1;
-                    drawEnemyTank(currentEnemyTanks[i]);
+                    drawEnemyTank(currentEnemyTanks[i],[0,1,2]);
                     break;
                 case "left":
                     if (currentEnemyTanks[i].positions[0][0] - 1 <0) {
@@ -624,12 +789,12 @@
                         }
                     }
                     if (!flag) break;
-                    clearTank(currentEnemyTanks[i]);
+                    clearTank(currentEnemyTanks[i],[3,4,5]);
                     for (var j = 0; j < currentEnemyTanks[i].positions.length; j++) {
                         currentEnemyTanks[i].positions[j][0] -= 1;
                     }
                     currentEnemyTanks[i].baseDot[0] -= 1;
-                    drawEnemyTank(currentEnemyTanks[i]);
+                    drawEnemyTank(currentEnemyTanks[i],[0,1,2]);
                     break;
                 case "right":
                     if (currentEnemyTanks[i].positions[0][0] + 1 > bgCol-1) {
@@ -648,13 +813,47 @@
                         }
                     }
                     if (!flag) break;
-                    clearTank(currentEnemyTanks[i]);
+                    clearTank(currentEnemyTanks[i],[3,4,5]);
                     for (var j = 0; j < currentEnemyTanks[i].positions.length; j++) {
                         currentEnemyTanks[i].positions[j][0] += 1;
                     }
                     currentEnemyTanks[i].baseDot[0] += 1;
-                    drawEnemyTank(currentEnemyTanks[i]);
+                    drawEnemyTank(currentEnemyTanks[i],[0,1,2]);
                     break;
+            }
+        }
+    }
+    //敌方坦克Boss移动一格
+    var enemyTankBossMove = function () {
+        if(currentEnemyTankBoss.MoveDirection=="left"){
+            if(currentEnemyTankBoss.positions[0][0]-1<0)
+            {
+                currentEnemyTankBoss.MoveDirection="right"
+                return;
+            }
+            else
+            {
+                clearTank(currentEnemyTankBoss);
+                for (var j = 0; j < currentEnemyTankBoss.positions.length; j++) {
+                        currentEnemyTankBoss.positions[j][0] -= 1;
+                }
+                currentEnemyTankBoss.baseDot[0] -= 1;
+                drawEnemyTank(currentEnemyTankBoss);
+            }
+        }else{
+            if(currentEnemyTankBoss.positions[3][0]+1>bgCol-1)
+            {
+                currentEnemyTankBoss.MoveDirection="left"
+                return;
+            }
+            else
+            {
+                clearTank(currentEnemyTankBoss);
+                for (var j = 0; j < currentEnemyTankBoss.positions.length; j++) {
+                        currentEnemyTankBoss.positions[j][0] += 1;
+                }
+                currentEnemyTankBoss.baseDot[0] += 1;
+                drawEnemyTank(currentEnemyTankBoss);
             }
         }
     }
@@ -724,26 +923,62 @@
     }
     //显示消息
     var showMsg = function (m) {
-        $("#msg").html(m).css("display", "block").animate({ "width": "400px", "height": "70px" }, 400);
+        var left=($("#frame").width()-400)/2;
+        var top=($("#frame").height()-90)/2;
+        $("#msg").html(m).css({"left":left+"px","top":top+"px","display":"block"}).animate({ "width": "400px", "height": "90px" }, 400);
     }
     //初始化
-    var init = function () {
+    var Init = function () {
+        //背景图像调整后的大小
+        bgImgSize = boxSide * 7 + "px " + boxSide * 5 + "px";
+        //背景图像一组X,Y坐标值
+        bgImgPositionXs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4, -boxSide * 5, -boxSide * 6];
+        bgImgPositionYs = [0, -boxSide, -boxSide * 2, -boxSide * 3, -boxSide * 4];
+        //我方坦克背景图像XY坐标值
+        meBgPositionX = bgImgPositionXs[4];
+        meBgPositionY = bgImgPositionYs[3];
+        //敌方坦克背景图像XY坐标值
+        enemyBgPositionX = bgImgPositionXs[0];
+        enemyBgPositionY = bgImgPositionYs[3];
+        //我方初始位置
+        mePositions = [Math.floor(bgCol / 2) - 1, bgRow - 3];
+        //敌方初始位置
+        enemyPositions = [[0, 0], [Math.floor(bgCol / 2) - 1, 0], [bgCol - 3, 0]];
+        //敌方Boss初始位置
+        enemyBossPositions = [Math.floor(bgCol / 2) - 3, 0];
+        //当前所有敌人坦克对象
+        currentEnemyTanks = [];
+        //当前所有敌方子弹对象
+        currentEnemyBullets = [];
+        //当前我方子弹对象
+        currentMeBullets = [];
+
+        bossCurrentHP=bossHP+level;
+        $("#bossHP").html("BOSS生命值：<span style='font-size:25px;color:orange'>"+bossCurrentHP+"</span>");
+        //敌方移动速度初始化
+        enemyTankCurrentSpeed=enemyTankInitSpeed - (level - 1) * 50;
+        //敌方子弹发射频率初始化
+        enemyBulletRateSpeed = enemyTankCurrentSpeed * 4;
+        //清空box元素
+        $("#main").empty();
         //加载背景网格
         for (var i = 0; i < bgCol * bgRow; i++) {
             var box = $("<div class='box' status='null'></div>");
             $("#main").append(box);
         }
-        $(".box").css({ "width": boxSide - 1 + "px", "height": boxSide - 1 + "px" });
+        $(".box").css({"float":"left", "width": boxSide - 1 + "px", "height": boxSide - 1 + "px", "borderRight": "dashed 1px #1B272C", "borderBottom": "dashed 1px #1B272C", "borderLeft": "0px", "borderTop": "0px" });
         $("#bodyleft").css("width", bgCol * boxSide + "px");
         $("#framebody").css("height", bgRow * boxSide + "px");
         $("#frame").css({ "width": bgCol * boxSide + 82 + "px", "height": bgRow * boxSide + 22 + "px" });
 
         createMeTank(mePositions[0], mePositions[1], "up");
-        createEnemyTank(enemyPositions[0][0], enemyPositions[0][1],direction[randNum(4)]);
-        createEnemyTank(enemyPositions[1][0], enemyPositions[1][1], direction[randNum(4)]);
-        createEnemyTank(enemyPositions[2][0], enemyPositions[2][1], direction[randNum(4)]);
-        //createEnemyTank(enemyPositions[0][0], enemyPositions[0][1], direction[3]);
-        //createEnemyTank(0, bgRow-3, direction[1]);
+        if(isBossMode){
+            createEnemyTankBoss(enemyBossPositions[0],enemyBossPositions[1]);
+        }else{
+            createEnemyTank(enemyPositions[0][0], enemyPositions[0][1],direction[randNum(4)]);
+            createEnemyTank(enemyPositions[1][0], enemyPositions[1][1], direction[randNum(4)]);
+            createEnemyTank(enemyPositions[2][0], enemyPositions[2][1], direction[randNum(4)]);
+        }    
     }
     //游戏结束
     var gameOver = function () {
@@ -753,7 +988,8 @@
         clearInterval(enemyTankTimerId);
         clearInterval(enemyBulletRateTimerId);
         $("#btnControl").val("开始");
-        showMsg("中弹了！");
+        $("#btnSetting,#btnControl").attr("disabled","disabled").css("backgroundColor","rgba(204, 204, 204, 0.34)");
+        showMsg("很遗憾你中弹了！");
     }
     //游戏胜利
     var gameVictory = function () {
@@ -763,7 +999,8 @@
         clearInterval(enemyTankTimerId);
         clearInterval(enemyBulletRateTimerId);
         $("#btnControl").val("开始");
-        showMsg("通关了！");
+        $("#btnSetting,#btnControl").attr("disabled","disabled").css("backgroundColor","rgba(204, 204, 204, 0.34)");
+        showMsg("恭喜你通关了！");
     }
     //控制方向
     var isKeyDown = false;
@@ -780,7 +1017,7 @@
                 case 90: createMeBullet(currentMeTank.positions[0][0], currentMeTank.positions[0][1], currentMeTank.direction); break;
                 case 34: createMeBullet(currentMeTank.positions[0][0], currentMeTank.positions[0][1], currentMeTank.direction); break;
             }
-            isKeyDown = false;
+			setTimeout("isKeyDown=false",meTankSpeed);
         }
     });
     //我方子弹计时器事件
@@ -793,19 +1030,25 @@
     }
     //敌方坦克计时器事件
     var enemyTankTimerEvent = function () {
-        enemyTankMove();
+       isBossMode? enemyTankBossMove() : enemyTankMove();
     }
     //敌方坦克子弹发射频率事件
     var enemyBulletRateTimerEvent = function () {
-        for (var i = 0; i < currentEnemyTanks.length; i++) {
-            if(randNum(2))
-                createEnemyBullet(currentEnemyTanks[i].positions[0][0], currentEnemyTanks[i].positions[0][1], currentEnemyTanks[i].direction);
-        }
-        if (currentEnemyTanks.length < enemyTankMaxCount)
-        {
-            var r = randNum(3);
-            createEnemyTank(enemyPositions[r][0], enemyPositions[r][1], direction[randNum(4)]);
-        }
+        if(isBossMode){
+            if(randNum(2)) createEnemyBullet(currentEnemyTankBoss.positions[22][0], currentEnemyTankBoss.positions[22][1], "down");
+            if(randNum(2)) createEnemyBullet(currentEnemyTankBoss.positions[23][0], currentEnemyTankBoss.positions[23][1], "down");
+            if(randNum(2)) createEnemyBullet(currentEnemyTankBoss.positions[24][0], currentEnemyTankBoss.positions[24][1], "down");           
+        }else{
+            for (var i = 0; i < currentEnemyTanks.length; i++) {
+                if(randNum(2))
+                    createEnemyBullet(currentEnemyTanks[i].positions[0][0], currentEnemyTanks[i].positions[0][1], currentEnemyTanks[i].direction);
+            }
+            if (currentEnemyTanks.length < enemyTankMaxCount)
+            {
+                var r = randNum(3);
+                createEnemyTank(enemyPositions[r][0], enemyPositions[r][1], direction[randNum(4)]);
+            }
+        }           
     }
     //加载事件
     $(function () {
@@ -815,17 +1058,17 @@
         musicOpen();
         //声音控制
         $("#myCanvas").click(function () { musicStatus ? musicClose() : musicOpen(); });
-
+       
         //开始按钮
         $("#btnControl").click(function () {
             if ($(this).val() == "开始") {
-                //alert("目前只是浮云。。。 End键开火，但是打不到敌人，只能中弹。--！");
                 runing = true;
                 meBulletTimerId = setInterval(meBulletTimerEvent, meBulletSpeed);
                 enemyBulletTimerId = setInterval(enemyBulletTimerEvent, enemyBulletSpeed);
-                enemyTankTimerId = setInterval(enemyTankTimerEvent, enemyTankSpeed);
+                enemyTankTimerId = setInterval(enemyTankTimerEvent, enemyTankCurrentSpeed);
                 enemyBulletRateTimerId = setInterval(enemyBulletRateTimerEvent, enemyBulletRateSpeed);
                 $(this).val("暂停");
+                $("#setLevel").attr("disabled","disabled").parent().css("color","gray");
             }
             else {
                 runing = false;
@@ -836,35 +1079,37 @@
                 $(this).val("开始");
             }
         });
-        
-        init();
+        //设置
+        $("#btnSetting").click(function(){
+            $("#boxWidth").val(boxSide).next().val(boxSide);
+            $("#mainWidth").val(bgCol).next().val(bgCol);
+            $("#mainHeight").val(bgRow).next().val(bgRow);
+            $("#setLevel").val(level).next().val(level);
+            
+            var left=($("#frame").width()-$("#divSetting").width())/2;
+            var top=($("#frame").height()-$("#divSetting").height())/2;
+            $("#divSetting").css({"left":left+"px","top":top+"px","display":"block"})
+        });
+        $("input[type='range']").change(function(){
+            $(this).next().val(this.value);
+        });
+        //保存
+        $("#btnSave").click(function(){
+            boxSide=$("#boxWidth").val();
+            bgCol=$("#mainWidth").val();
+            bgRow=$("#mainHeight").val();
+            if(!$("#setLevel").attr("disabled")){
+                level=parseInt($("#setLevel").val());
+                $("#level span").html(level);
+            }
+            Init();
+        });
+        //关闭
+        $("#btnClose").click(function(){
+            $("#divSetting").css("display","none");
+        });
+        Init();
 });
 </script>
-</head>
-<body>
-<div style="height:42px;width:400px; margin-left:auto;margin-right:auto; ">
-   <div style="height:30px;width:350px;padding-top:10px;float:left; ">Z键或PageDown键：发射&nbsp;&nbsp; &nbsp;   声音控制：</div>
-   <canvas id="myCanvas" width="50" height="40" style="cursor:pointer; float:left; "  title="点击切换">您的浏览器不支持HTML5新特性</canvas>
-</div>
-<div id="frame">
-  <div id="frametitle">坦克大战</div>
-  <div id="framebody">
-      <div id="bodyleft">
-        
-        <div id="main">
-        </div>
-      </div>
-      <div id="bodyright">    
-          <div id="score"><br />得分：<br /><span>0</span></div>
-          <div id="level"><br />级别：<br /><span>1</span></div>    
-          <div id="menu">
-            <br />
-            <input type="button" id="btnControl" value="开始" />
-          </div>   
-      </div>    
-  </div>
-  <div id="msg"></div>
-</div>
-<div><br /><a href="index.html">返回主页</a></div>
 </body>
 </html>

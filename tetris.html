@@ -4,7 +4,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>俄罗斯方块</title>
-<script src="jquery-1.9.1.min.js"></script>
 <style>
     body{
 	    text-align:center;
@@ -19,9 +18,10 @@
         border-radius:6px;
         -o-box-shadow:0px 0px 15px rgba(222, 226, 237, 0.84);
         -o-border-radius:6px;
-        -moz-transition:-moz-transform 2s; 
+        /*-moz-transition:-moz-transform 2s; 
         -webkit-transition:-webkit-transform 2s;
-        -o-transition:-o-transform 2s;
+        -o-transition:-o-transform 2s;*/
+        transition: transform 2s;
 
         padding:2px;
         background-color:#ccc;
@@ -151,6 +151,7 @@
 		padding:6px;
 	}
 </style>
+<script src="js/jquery-1.9.1.min.js"></script>
 <!--<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>-->
 <script type="text/javascript"> 
 //document.write(returnCitySN["cip"]+' '+returnCitySN["cname"]);
@@ -202,9 +203,9 @@
 
         //锁定
         var locked = false;
-        var audioMove = "Move.wav";
-        var audioCrash = "Crash.wav";
-        var audioBgmic = "Bgmic.wav";
+        var audioMove = "audio/Move.wav";
+        var audioCrash = "audio/Crash.wav";
+        var audioBgmic = "audio/Bgmic.wav";
         //播放音效
         var au = document.createElement("audio") ;
         var PlayAudio = function (url) {
@@ -367,21 +368,21 @@
         var createActBox = function (x, y) {
             if (x < 0 || y < 0) return;
             var i = y * 10 + x;
-            $(".box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": bgPositionX + "px " + bgPositionY + "px", "border": "solid 0px #CCCCCC" });
+            $(".box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(image/BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": bgPositionX + "px " + bgPositionY + "px", "border": "solid 0px #CCCCCC" });
             $(".box:eq(" + i + ")").attr("status", "active");
             //$(".box:eq(" + i + ")").html("<span style='color:yellow'>N</span>");
         }
         //绘制下一个单格
         var createNextBox = function (x, y) {
             var i = y * 4 + x;
-            $("#next>.box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": _bgPositionX+"px "+bgPositionY+"px", "border": "solid 0px #CCCCCC" });
+            $("#next>.box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(image/BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": _bgPositionX+"px "+bgPositionY+"px", "border": "solid 0px #CCCCCC" });
             $("#next>.box:eq(" + i + ")").attr("status", "active");
             // $(".box:eq(" + i + ")").html("<span style='color:yellow'>act</span>"); 
         }
         //绘制一个固定单格
         var createFixBox = function (x, y,bgPosition) {
             var i = y * 10 + x;
-            $(".box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": bgPosition, "border": "solid 0px #CCCCCC" });
+            $(".box:eq(" + i + ")").css({ "width": "22px", "height": "22px", "background": "url(image/BlockBg.gif)", "background-size": "160px 110px", "backgroundPosition": bgPosition, "border": "solid 0px #CCCCCC" });
             $(".box:eq(" + i + ")").attr({ "status": "fixed", "recover": "true" });
            // $(".box:eq(" + i + ")").html("<span style='color:red'>F</span>");
         }
@@ -476,7 +477,7 @@
                     isrun = false; 
                     $("#gametype input").removeAttr("disabled");
 					//得分存入数据库
-				    $.post("doPost.php",{cname:getCookie('user'),type:'tetris',score:score,do_type:1});
+				    $.post("service/doPost.php",{cname:getCookie('user'),type:'tetris',score:score,do_type:1});
 					
                     var lev = score / leveScore;
                     var msg = "";
@@ -660,7 +661,7 @@
         }
 		//获取排名
 		var getSort=function(){
-			$.post("doPost.php",{do_type:2,type:'tetris'},function(d){$("#sort").html(d);});
+			$.post("service/doPost.php",{do_type:2,type:'tetris'},function(d){$("#sort").html(d);});
 		}
 		//初始化数据
 		var init=function(){
@@ -718,7 +719,8 @@
             $("#myCanvas").click(function () { if (musicStatus) { musicClose(); BgAudio("pause"); } else { musicOpen(); BgAudio("play"); } });
             //单选按钮3D旋转
             var deg = 360;
-            $(":radio").change(function () { $("#frame").css({ "-moz-transform": "rotateY(" + deg + "deg)", "-webkit-transform": "rotateY(" + deg + "deg)", "-o-transform": "rotateY(" + deg + "deg)" }); deg = deg == 360 ? 0 : 360 });
+           // $(":radio").change(function () { $("#frame").css({ "-moz-transform": "rotateY(" + deg + "deg)", "-webkit-transform": "rotateY(" + deg + "deg)", "-o-transform": "rotateY(" + deg + "deg)" }); deg = deg == 360 ? 0 : 360 });
+           $(":radio").change(function () { $("#frame").css({ "transform": "rotateY(" + deg + "deg)" }); deg = deg == 360 ? 0 : 360 });
             $("input[value*='开始']").click(function () {
                 if (!isrun) {
                     if (isEnd) {
