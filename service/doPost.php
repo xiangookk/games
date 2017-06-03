@@ -8,15 +8,15 @@ $score=$_POST["score"];
 $number=$_POST["number"];
 $pass=$_POST["pass"];
 
-$con = mysql_connect("127.0.0.1","zjwdb_6130248","Sxx123456");
-//$con = mysql_connect("127.0.0.1","root","123");
+//$con = mysql_connect("127.0.0.1","zjwdb_6130248","Sxx123456");
+$con = mysql_connect("127.0.0.1","root","123");
 if (!$con)
 {	
 	die('Could not connect: ' . mysql_error());
 }
 
-mysql_select_db("zjwdb_6130248", $con);
-//mysql_select_db("game", $con);
+//mysql_select_db("zjwdb_6130248", $con);
+mysql_select_db("game", $con);
 mysql_query("SET NAMES 'utf8'",$con);
 
 if ($do_type==1)//新增或更新

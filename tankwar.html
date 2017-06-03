@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿<!--
+  Copyright (c) 2013-2017 www.sunxx.cn
+  提醒：仅供学习交流使用，请勿用于商业用途，请尊重知识产权，侵权必究。
+  作者：孙向向 E-mail:xiango_k@163.com  QQ:276915081 TEL:15214322163
+  官网介绍：http://www.sunxx.cn
+ -->
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -416,7 +422,7 @@
                 break;
         }
         var enemyTank = { baseDot: [x, y], positions: _position, direction: d };
-        drawEnemyTank(enemyTank);
+        //drawEnemyTank(enemyTank);
         return enemyTank;
     }
     //绘制一个我方坦克
@@ -912,8 +918,21 @@
     }
     //敌方坦克改变方向
     var enemyTankChangeDirection = function (enemyTank, i, direction) {
+        var enemyTank_temp=getEnemyTank(enemyTank.baseDot[0], enemyTank.baseDot[1], direction);
+        // for (var i = 0; i < enemyTank_temp.positions.length; i++) {
+        //     var n=enemyTank_temp.positions[i][1]*bgCol+enemyTank_temp[i][0];
+        //     if (
+        //         (($(".box:eq(" + n + ")").attr("status") == "enemyTank"
+        //         ||$(".box:eq(" + n + ")").attr("status") == "meTank"))
+        //         &&($.inArray(enemyTank_temp.positions[i],enemyTank.positions)==-1)
+        //       )
+        //     {           
+        //         return;
+        //     }
+        // }
         clearTank(enemyTank);
-        currentEnemyTanks.splice(i, 1, getEnemyTank(enemyTank.baseDot[0], enemyTank.baseDot[1], direction));
+        drawEnemyTank(enemyTank_temp);
+        currentEnemyTanks.splice(i, 1, enemyTank_temp);
     }
 
 
