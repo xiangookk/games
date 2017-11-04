@@ -8,8 +8,8 @@ $score=$_POST["score"];
 $number=$_POST["number"];
 $pass=$_POST["pass"];
 
-//$con = mysql_connect("127.0.0.1","zjwdb_6130248","Sxx123456");
-$con = mysql_connect("127.0.0.1","root","123");
+$con = mysql_connect("127.0.0.1","zjwdb_6130248","Sxx123456");
+//$con = mysql_connect("127.0.0.1","root","123");
 if (!$con)
 {	
 	die('Could not connect: ' . mysql_error());

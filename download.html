@@ -152,7 +152,7 @@
             xhr.onload=function(){
                 isUploading=false;
                 if(xhr.status===200){
-                    alert("上传成功！");
+                    alert(xhr.responseText);
                     vm.loadData();
                     vm.boxCss="fileBox";
                 }else{
