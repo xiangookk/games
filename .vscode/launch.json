@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "启动程序",
             "program": "${file}"
+        },
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000
         }
     ]
 }

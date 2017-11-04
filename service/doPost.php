@@ -15,8 +15,7 @@ if (!$con)
 	die('Could not connect: ' . mysql_error());
 }
 
-//mysql_select_db("zjwdb_6130248", $con);
-mysql_select_db("game", $con);
+mysql_select_db("zjwdb_6130248", $con);
 mysql_query("SET NAMES 'utf8'",$con);
 
 if ($do_type==1)//新增或更新

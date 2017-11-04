@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>上传下载</title>
+    <style type="text/css">
+        #frame {
+            margin: 15px;
+        }
+        #main{
+            float: left;
+            width:50%;
+        }
+        ul,
+        li {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+            
+        }
+    
+        li {
+            border: solid 1px #C1CDC1;
+            height: 25px;
+            width: 90%;
+            min-width: 300px;
+            margin-top: 5px;
+            padding: 5px;
+            font-size: 16px;
+            align-content: center;
+        }
+    
+        .fileBox {
+            margin-top: 5px;
+            width: 300px;
+            height: 100px;
+            border-style: dashed;
+            border-width: 3px;
+            border-color: gray;
+            font-size: 30px;
+            color: #dddddd;
+            text-align: center;
+            padding-top: 2em;
+        }
+        .fileBoxEnter {
+            margin-top: 5px;
+            width: 300px;
+            height: 100px;
+            border-style: dashed;
+            border-width: 3px;
+            border-color: rgb(223, 144, 24);
+            font-size: 30px;
+            color: #dddddd;
+            text-align: center;
+            padding-top: 2em;
+        }
+        .fileBoxDrop {
+            margin-top: 5px;
+            width: 300px;
+            height: 100px;
+            border-style: dashed;
+            border-width: 3px;
+            border-color: rgb(31, 46, 114);
+            font-size: 30px;
+            color: #dddddd;
+            text-align: center;
+            padding-top: 2em;
+        }
+        #upDiv{
+            float:left;
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="frame">
+        <div id="main">
+            <ul>
+                <li v-for='file in files'>
+                    <a :href='file.fileUrl' v-text='file.fileName'></a>
+                    <span style="float:right;color:#b0b0b0;font-style:italic" v-text='file.fileTime'></span>
+                    <span style="float:right;margin-right:15px;" v-text='file.fileSize'></span>   
+                </li>
+            </ul>
+        </div>
+        <div id="upDiv">
+            <div id="fileBox" :class="boxCss" @dragover="dragover" @dragenter="dragenter" @dragleave="dragleave" @drop="drop">拖入文件上传</div>
+            <div style="margin-top:10px">
+                <progress id="upProgress" style="width:260px" max="100" :value="percent"></progress>
+                <span id="showProg">{{percent}}%</span>
+            </div>
+        </div>
+    </div>
+    <script src="js/vue.js"></script>
+    <script src="js/vue-resource.js"></script>
+    <script>
+       var vm = new Vue({
+            el: '#frame',
+            data: {
+                files: [],
+                boxCss:"fileBox",
+                percent: 0,
+                isUploading:false
+            },
+            mounted() {
+                this.$nextTick(function () {
+                    this.loadData()
+                })
+            },
+
+            methods: {
+                loadData(){
+                    this.$http.get("service/doUpload.php?type=getData").then((response)=>{
+                        this.files=JSON.parse(response.bodyText);
+                    },(errRes)=>{
+                        alert("err");
+                    });
+                },
+                dragover(){
+                    event.preventDefault();
+                },
+                dragenter(){
+                    this.boxCss="fileBoxEnter";
+                },
+                dragleave(){
+                    this.boxCss="fileBox";
+                },
+                drop(){
+                    this.boxCss="fileBoxDrop";
+                    event.preventDefault();
+                    let file = event.dataTransfer.files[0];
+                    Upload(file);
+                }
+                // },
+                // Upload:function(file){
+                //     Upload(file);
+                // }
+            }
+        });
+        var isUploading=false;
+        function Upload(file){
+            if(isUploading) return;
+            isUploading=true;
+            var formData=new FormData();
+            formData.append("userfile",file);
+            
+            var xhr=new XMLHttpRequest();
+            xhr.open("post","service/doUpload.php",true);
+
+            xhr.onload=function(){
+                isUploading=false;
+                if(xhr.status===200){
+                    alert("上传成功！");
+                    vm.loadData();
+                    vm.boxCss="fileBox";
+                }else{
+                    alert("上传出错！");
+                }
+            };
+
+            xhr.upload.onprogress=function(even){
+                if(even.lengthComputable){
+                    var percent=Math.floor(even.loaded/even.total*100);
+                    vm.percent=percent;
+                }
+            }
+            xhr.send(formData);
+        }
+    </script>
+
+</body>
+</html>
