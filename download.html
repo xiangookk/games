@@ -85,7 +85,7 @@
             </ul>
         </div>
         <div id="upDiv">
-            <div id="fileBox" :class="boxCss"  @click="SelectFile" @dragover="dragover" @dragenter="dragenter" @dragleave="dragleave" @drop="drop($event)">拖入文件上传</div>
+            <div onselectstart="return false" style="cursor:default;" id="fileBox" :class="boxCss"  @click="SelectFile" @dragover="dragover" @dragenter="dragenter" @dragleave="dragleave" @drop="drop($event)">拖入文件上传</div>
             <div style="margin-top:10px">
                 <progress id="upProgress" style="width:260px" max="100" :value="percent"></progress>
                 <span id="showProg">{{percent}}%</span>
