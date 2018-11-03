@@ -1,8 +1,11 @@
 <?php
 
 if(isset($_FILES['userfile'])){
-	//$uploadfile='../files/'.iconv("utf-8","utf-8",$_FILES['userfile']['name']);
-	$uploadfile='../files/'.$_FILES['userfile']['name'];
+	$uploadPath='../files/upload/';
+	if(!file_exists($uploadPath)){
+		mkdir ($uploadPath,0777,true);
+	}
+	$uploadfile=$uploadPath.$_FILES['userfile']['name'];
 	if(move_uploaded_file($_FILES['userfile']['tmp_name'],iconv("utf-8","gb2312",$uploadfile))){
 		echo '上传成功';
 	}else{
@@ -11,9 +14,9 @@ if(isset($_FILES['userfile'])){
 }
 if(isset($_GET["type"])&&$_GET["type"]=="getData"){
 	$resposeStr='[';
-	$dir='../files/';
+	$dir='../files/upload/';
 	$dh=opendir($dir);
-	$dirOut='files/';
+	$dirOut='files/upload/';
 	while($filename=readdir($dh))
 	{
 		if($filename!="."&&$filename!=".."){

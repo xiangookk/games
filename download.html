@@ -159,7 +159,7 @@
             var xhr=new XMLHttpRequest();
             xhr.open("post","service/doUpload.php",true);
 
-            xhr.onload=function(){
+            /* xhr.upload.onload=function(){
                 isUploading=false;
                 if(xhr.status===200){
                     alert(xhr.responseText);
@@ -168,14 +168,25 @@
                 }else{
                     alert("上传出错！");
                 }
-            };
-
+            }; */
             xhr.upload.onprogress=function(even){
                 if(even.lengthComputable){
                     vm.percent=Math.floor(even.loaded/even.total*100);
                     vm.loadSize=even.loaded+'/'+even.total+'(byte)';
                 }
             }
+            xhr.upload.onload=()=>{
+                isUploading=false;
+                alert('上传成功');
+                vm.loadData();
+                vm.boxCss="fileBox";
+            };
+            xhr.upload.onerror=()=>{
+                isUploading=false;
+                alert('上传失败');
+                vm.boxCss="fileBox";
+            };
+
             xhr.send(formData);
         }
     </script>
