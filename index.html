@@ -49,8 +49,8 @@
         text-shadow:0px 0px 6px yellow;
     }
     li img {
-        width:180px;
-        height:160px;
+        width:95%;
+        height:90%;
     }
 
     #canvas {
@@ -63,11 +63,13 @@
 <body>
     <canvas id='canvas'></canvas> 
     <div id="pageframe">
-        <div style="font-size:18px; text-shadow:0px 0px 6px yellow">重温儿时经典方块游戏</div>
+        <div style="font-size:18px; text-shadow:5px 8px 3px yellow">重温儿时经典方块游戏</div>
         <ul>
-            <li v-for="item in games" @click="openTab(item.url)"><img :src="item.img" /><div style="margin-top: -5px;" v-text="item.name"></div></li>
+            <li v-for="item in games" @click="openTab(item.url)">
+                <img v-if="item.img" :src="item.img" />
+                <div style="margin-top: -5px;" v-text="item.name"></div>
+            </li>
         </ul>
-        <a id="openTabA" target="_blank" :href="openUrl" v-show="false"></a>
     </div>
 <script type="text/javascript">
     var can = document.getElementById('canvas');
@@ -104,14 +106,14 @@
         };
         if (liuXY.length) {
             for (var i in liuXY) {
-                liuXY[i].cX -= 5;
+                liuXY[i].cX -= 12;
                 liuX(liuXY[i].cX, liuXY[i].y, liuXY[i].x);
                 if (liuXY[i].cX < 0 || getY(liuXY[i].cX, liuXY[i].y, liuXY[i].x) > h) {
                     liuXY.splice(i, 1);
                 };
             };
         };
-        if (Math.random() > 0.96) {
+        if (Math.random() > 0.99) {
             var a = Math.random() * (w - 400) + 400;
             liuXY.push({
                 x: a,
@@ -193,17 +195,18 @@
                 {'url':'airplane.html','img':'image/airplane.png','name':'开飞机'},
                 {'url':'tankwar.html','img':'image/tankwar.png','name':'坦克大战'},
                 {'url':'pingpong.html','img':'image/pingpong.png','name':'乒乓球'},
-                {'url':'boxMan.html','img':'image/boxMan.png','name':'方块人'},
+                {'url':'boxMan.html','img':'image/boxMan.png','name':'小方人'},
                 {'url':'canvas1.html','img':'image/canvas1.png','name':'画画板'},
                 {'url':'ofoPass.html','img':'','name':'记录ofo密码'},
                 {'url':'download.html','img':'','name':'下载区'}
-            ],
-            openUrl:''
+            ]
         },
         methods:{
             openTab:function(url){
-                this.openUrl=url;
-                setTimeout('document.getElementById("openTabA").click()',600);
+                let a=document.createElement('a');
+                a.target='_blank';
+                a.href=url;
+                a.click();
             }
         }
     })

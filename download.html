@@ -84,11 +84,12 @@
                 </li>
             </ul>
         </div>
-        <div id="upDiv" @click="SelectFile">
-            <div id="fileBox" :class="boxCss" @dragover="dragover" @dragenter="dragenter" @dragleave="dragleave" @drop="drop($event)">拖入文件上传</div>
+        <div id="upDiv">
+            <div id="fileBox" :class="boxCss"  @click="SelectFile" @dragover="dragover" @dragenter="dragenter" @dragleave="dragleave" @drop="drop($event)">拖入文件上传</div>
             <div style="margin-top:10px">
                 <progress id="upProgress" style="width:260px" max="100" :value="percent"></progress>
                 <span id="showProg">{{percent}}%</span>
+                <p v-text="loadSize"></p>
             </div>
             <input type="file" id="ufile" onchange="Upload(this.files[0])" hidden/>
         </div>
@@ -102,6 +103,7 @@
                 files: [],
                 boxCss:"fileBox",
                 percent: 0,
+                loadSize:'',
                 isUploading:false
             },
             mounted() {
@@ -118,7 +120,7 @@
                     this.$http.get("service/doUpload.php?type=getData").then((response)=>{
                         this.files=JSON.parse(response.bodyText);
                     },(errRes)=>{
-                        alert("error");
+                        alert("error"+errRes);
                     });
                 },
                 dragover(){
@@ -135,8 +137,8 @@
                     let event=e||window.event;
                     event.preventDefault();
                     let file = event.dataTransfer.files[0];
-                    if(file.size>20*1024*1024){
-                        alert("文件大小不能超过20M");
+                    if(file.size>10*1024*1024){
+                        alert("文件大小不能超过10M");
                         return;
                     }
                     Upload(file);
@@ -170,8 +172,8 @@
 
             xhr.upload.onprogress=function(even){
                 if(even.lengthComputable){
-                    var percent=Math.floor(even.loaded/even.total*100);
-                    vm.percent=percent;
+                    vm.percent=Math.floor(even.loaded/even.total*100);
+                    vm.loadSize=even.loaded+'/'+even.total+'(byte)';
                 }
             }
             xhr.send(formData);
