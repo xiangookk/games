@@ -483,7 +483,7 @@
                     isrun = false; 
                     $("#gametype input").removeAttr("disabled");
 					//得分存入数据库
-				    $.post("service/doPost.php",{cname:getCookie('user'),type:'tetris',score:score,do_type:1});
+				    $.post("service/php/doPost.php",{cname:getCookie('user'),type:'tetris',score:score,do_type:1});
 					
                     var lev = score / leveScore;
                     var msg = "";
@@ -667,7 +667,7 @@
         }
 		//获取排名
 		var getSort=function(){
-			$.post("service/doPost.php",{do_type:2,type:'tetris'},function(d){$("#sort").html(d);});
+			$.post("service/php/doPost.php",{do_type:2,type:'tetris'},function(d){$("#sort").html(d);});
 		}
 		//初始化数据
 		var init=function(){

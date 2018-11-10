@@ -117,7 +117,7 @@
                    document.querySelector("#ufile").click();
                 },
                 loadData(){
-                    this.$http.get("service/doUpload.php?type=getData").then((response)=>{
+                    this.$http.get("service/php/doUpload.php?type=getData").then((response)=>{
                         this.files=JSON.parse(response.bodyText);
                     },(errRes)=>{
                         alert("error"+errRes);
@@ -157,7 +157,7 @@
             formData.append("userfile",file);
             
             var xhr=new XMLHttpRequest();
-            xhr.open("post","service/doUpload.php",true);
+            xhr.open("post","service/php/doUpload.php",true);
 
             /* xhr.upload.onload=function(){
                 isUploading=false;

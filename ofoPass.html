@@ -136,7 +136,7 @@ function save()
 	 return;
 	 }
 	//存入数据库
-	$.post("service/doPost.php",{number:$("#number").val(),pass:$("#pass").val(),type:$("#type").val(),do_type:9},function(d){
+	$.post("service/php/doPost.php",{number:$("#number").val(),pass:$("#pass").val(),type:$("#type").val(),do_type:9},function(d){
 	if(d>0)
 	{alert("保存成功！");}
 	else
@@ -147,7 +147,7 @@ function search()
 {
 	//查询
 	$("#btnSearch").attr("disabled","disabled").val("查询中..");
-    $.post("service/doPost.php",{number:$("#number").val(),do_type:8},function(d){	
+    $.post("service/php/doPost.php",{number:$("#number").val(),do_type:8},function(d){	
 	$("#pass").val(d);
 	$("#btnSearch").removeAttr("disabled").val("查 询");
 	});	 
